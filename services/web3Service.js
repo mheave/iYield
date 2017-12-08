@@ -7,20 +7,25 @@ class Web3Service{
     startedOk(){
         //this.getAllBeneficiaries();
         this.addToRegistry();
-
+        this.getAllBeneficiaries();
     }
 
     addToRegistry(){
         let web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));        
         var contract = new web3.eth.Contract(this.abiString(),"0x95e409a7eb040bdefb82c6bee73729a772139864");
         contract.options.from = "0x15e2a43bffdd944830f3a82d5b469b3da73e198d";
+        contract.options.gasPrice = '20000000000000'; 
+        contract.options.gas = 5000000;   
         var benezzz = contract.methods.addParticipant("0xf5b3ba922aa89faa79d6b285243968654c05071e", "0xf5b3ba922aa89faa79d6b285243968654c05071e");
         benezzz.call().then(function(result){ console.log(result);}, function(err){console.log(err)});
     }    
 
     getAllBeneficiaries(){
+        let web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));        
         var contract = new web3.eth.Contract(this.abiString(),"0x95e409a7eb040bdefb82c6bee73729a772139864");
         contract.options.from = "0x15e2a43bffdd944830f3a82d5b469b3da73e198d";
+        contract.options.gasPrice = '20000000000000'; 
+        contract.options.gas = 5000000;        
         console.log(contract);
         var benezzz = contract.methods.getAllBeneficiaries();
         benezzz.call().then(function(result){ console.log(result);}, function(err){console.log(err)});
