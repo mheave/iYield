@@ -4,6 +4,7 @@ var RegistryService = require('../services/registryService')
 
 router.get('/:userAddress', function(req, res, next) {
     let regService = new RegistryService();
+    console.log("calling RegistryService.getUserForAddress");
     let responseJson = regService.getUserForAddress(req.params.userAddress);
     res.json(responseJson);
   });

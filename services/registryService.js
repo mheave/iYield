@@ -2,7 +2,9 @@ var userModel = require('../models/userModel');
 var Web3Service = require('../services/web3Service');
 
 class RegistryService{
-    constructor(){   }
+    constructor(){  
+        this.web3Svc = new Web3Service();    
+     }
 
     getUserForAddress(userAddress){
         this.testWeb3Connection();
@@ -14,6 +16,8 @@ class RegistryService{
     }
 
     addUserToRegistry(userAddress, userId){
+        let web3Svc = this.web3Svc;
+        web3Svc.addToRegistry
         return userModel(userId, userAddress);
     }
 

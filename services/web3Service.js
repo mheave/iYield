@@ -1,4 +1,6 @@
 var Web3 = require('web3')
+var userModel = require('../models/userModel');
+
 
 class Web3Service{
     constructor(){}
@@ -6,14 +8,15 @@ class Web3Service{
     
     startedOk(){
         //this.getAllBeneficiaries();
-        this.addToRegistry();
-        this.getAllBeneficiaries();
+        // this.addToRegistry();
+        // this.getAllBeneficiaries();
+        this.getBalance();
     }
 
-    addToRegistry(){
+    addToRegistry(userModel){
         let web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));        
-        var contract = new web3.eth.Contract(this.abiString(),"0x95e409a7eb040bdefb82c6bee73729a772139864");
-        contract.options.from = "0x15e2a43bffdd944830f3a82d5b469b3da73e198d";
+        var contract = new web3.eth.Contract(this.abiString(),"0x7805ce3889d8622c70e8bad5b08238f8acdce3c7");
+        contract.options.from = "0xb5eef95c22328f89c0eac0ee28aab8d947daa321";
         contract.options.gasPrice = '20000000000000'; 
         contract.options.gas = 5000000;   
         var benezzz = contract.methods.addParticipant("0xf5b3ba922aa89faa79d6b285243968654c05071e", "0xf5b3ba922aa89faa79d6b285243968654c05071e");
@@ -22,8 +25,8 @@ class Web3Service{
 
     getAllBeneficiaries(){
         let web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));        
-        var contract = new web3.eth.Contract(this.abiString(),"0x95e409a7eb040bdefb82c6bee73729a772139864");
-        contract.options.from = "0x15e2a43bffdd944830f3a82d5b469b3da73e198d";
+        var contract = new web3.eth.Contract(this.abiString(),"0x7805ce3889d8622c70e8bad5b08238f8acdce3c7");
+        contract.options.from = "0xb5eef95c22328f89c0eac0ee28aab8d947daa321";
         contract.options.gasPrice = '20000000000000'; 
         contract.options.gas = 5000000;        
         console.log(contract);
@@ -33,7 +36,8 @@ class Web3Service{
 
     getBalance(){
         console.log("getting balance")
-        let balance = web3.eth.getBalance("0x15e2a43bffdd944830f3a82d5b469b3da73e198d");
+        let web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));        
+        let balance = web3.eth.getBalance("0xb5eef95c22328f89c0eac0ee28aab8d947daa321");
         balance.then(function(result) {
             console.log(result); // "Stuff worked!"
           }, function(err) {
