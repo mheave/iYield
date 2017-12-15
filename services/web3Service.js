@@ -20,11 +20,7 @@ class Web3Service{
         // contract.options.gas = 5000000;   
         contract.addParticipant("0xf5b3ba922aa89faa79d6b285243968654c05071e", "0xf5b3ba922aa89faa79d6b285243968654c05071e", {from: from})
         .then(result => {
-            // so we actually need to build and sign the tx on the server
-            // return transaction id
-            // on success???
-            // or do we need to do more
-            console.log(result)
+            return result;
         })
         .catch(err => {
             console.log('oops, something went wrong.')

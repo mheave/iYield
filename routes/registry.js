@@ -10,39 +10,34 @@ var RegistryService = require('../services/registryService');
 // //const eth = new Eth(new Eth.HttpProvider('https://rinkeby.infura.io'));
 // const eth = new Eth(new Eth.HttpProvider('http://localhost:8545'));
 
-router.get('/registry/:userAddress', function(req, res, next) {
+router.get('/registry/:address', async function(req, res) {
     let regService = new RegistryService();
-    console.log("calling RegistryService.getUserForAddress");
-    let responseJson = regService.getUserForAddress(req.params.userAddress);
-    res.json(responseJson);
-    next()
+    let responseJson = await regService.getUser(req.params.address);
+    return res.json(responseJson);
   });
 
-  router.post('/registry/:address', function(req, res){
-
-  //  res.send('hello world');
+  router.post('/registry/:address', async function(req, res){
     let regService = new RegistryService();
-    let responseJson = regService.addUserToRegistry(req.params.address, req.params.address);
-    res.json(responseJson);
+    let responseJson = await regService.addUser(req.params.address, req.params.address);
+    return res.json(responseJson);
 });
 
 
 // in this instance we assume from and to addresses will be the same
-router.delete('/registry/:address', function(req, res){
-    // let regService = new RegistryService();
-    // let userAddress = req.body.userAddress;
-    // let userId = req.body.userId;
-    // let responseJson = regService.addUserToRegistry(userAddress, userId);
-    // res.json(responseJson);
-});
+// router.delete('/registry/:address', function(req, res){
+//     let regService = new RegistryService();
 
-router.patch('/registry/:address', function(req, res){
-    // let regService = new RegistryService();
-    // let userAddress = req.body.userAddress;
-    // let userId = req.body.userId;
-    // let responseJson = regService.addUserToRegistry(userAddress, userId);
-    // res.json(responseJson);
-});
+//     let responseJson = regService.addUserToRegistry(userAddress, userId);
+//     // res.json(responseJson);
+// });
+
+// router.patch('/registry/:address', function(req, res){
+//     // let regService = new RegistryService();
+//     // let userAddress = req.body.userAddress;
+//     // let userId = req.body.userId;
+//     // let responseJson = regService.addUserToRegistry(userAddress, userId);
+//     // res.json(responseJson);
+// });
 
 // router.post('/registry/create/:fromAddress/:toAddress', function(req, res){
 //     let regService = new RegistryService();

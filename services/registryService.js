@@ -2,6 +2,9 @@ var userModel = require('../models/userModel');
 //var Web3Service = require('../services/web3Service');
 const Eth = require('ethjs');
 
+
+
+
 // we need to import defaults
 //const eth = 
 // just include ethjs
@@ -20,30 +23,12 @@ class RegistryService{
         this.pvtKey = '673a54beee87f667d9204d314433b04e49011d1a4caa74bf166830d6d7570515';
     }
 
-    // getUserForAddress(userAddress){
-    //     this.testWeb3Connection();
+    async getUser(address){
+        return await this.contract.getBeneficiary(address, {from: '0x1313734d2D6625173278978DDaa7B63400462745'});
+    }
 
-    //     if(userAddress === "test"){
-    //         return userModel("Mark", "theaddress");
-    //     }        
-    //     return {};
-    // }
-
-    addUserToRegistry(originator, benefactor){
-        //const contract = new this.eth.contract/*.addParticipant(originator, benefactor)*/
-        //console.log(contract)
-        this.contract.addParticipant(originator, benefactor, {from: '0x1313734d2D6625173278978DDaa7B63400462745', gas: 100000})
-        .then(res => {
-            console.log('res: ', res)
-        })
-        .catch(err => {
-            console.log('catch: ', err)
-        })
-        // console.log(this.eth.contr)
-        // return 'poo';
-        // let web3Svc = this.web3Svc;
-        // web3Svc.addToRegistry();  // should that be a function call?
-        // return userModel(userId, userAddress);
+    async addUser(originator, benefactor){
+        return await this.contract.addParticipant(originator, benefactor, {from: '0x1313734d2D6625173278978DDaa7B63400462745', gas: 100000});
     }
 
     // testWeb3Connection(){
@@ -54,9 +39,6 @@ class RegistryService{
     // defaultAbi(){   
     //     return 
     // }
-
-
-
 }
 
 module.exports = RegistryService;
