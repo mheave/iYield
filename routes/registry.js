@@ -6,9 +6,9 @@ var RegistryService = require('../services/registryService');
 // so we can take localhost or another provider
 // create constructor when launching api 
 // should be using http verbs
-const Eth = require('ethjs');
-const eth = new Eth(new Eth.HttpProvider('https://rinkeby.infura.io'));
-
+// const Eth = require('ethjs');
+// //const eth = new Eth(new Eth.HttpProvider('https://rinkeby.infura.io'));
+// const eth = new Eth(new Eth.HttpProvider('http://localhost:8545'));
 
 router.get('/registry/:userAddress', function(req, res, next) {
     let regService = new RegistryService();
@@ -20,9 +20,9 @@ router.get('/registry/:userAddress', function(req, res, next) {
 
   router.post('/registry/:address', function(req, res){
 
-    res.send('hello world');
+  //  res.send('hello world');
     let regService = new RegistryService();
-    let responseJson = regService.addUserToRegistry(req.params.address);
+    let responseJson = regService.addUserToRegistry(req.params.address, req.params.address);
     res.json(responseJson);
 });
 
