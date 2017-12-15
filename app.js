@@ -9,12 +9,13 @@ var errorModel = require('./models/errorModel');
 
 var app = express();
 app.use(logger('dev'));
-app.use(securityCheck("cwc"));
+//app.use(securityCheck("cwc"));
 app.use( bodyParser.json() );       
 app.use(bodyParser.urlencoded({ 
   extended: true
-})); 
-app.use('/registry', registry);
+}));
+
+app.use('/', registry);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

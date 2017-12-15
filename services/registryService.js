@@ -1,6 +1,10 @@
 var userModel = require('../models/userModel');
 var Web3Service = require('../services/web3Service');
 
+// just include ethjs
+// and kick out web3 service
+
+
 class RegistryService{
     constructor(){  
         this.web3Svc = new Web3Service();    
@@ -16,8 +20,9 @@ class RegistryService{
     }
 
     addUserToRegistry(userAddress, userId){
+        console.log('add user to reg')
         let web3Svc = this.web3Svc;
-        web3Svc.addToRegistry
+        web3Svc.addToRegistry();  // should that be a function call?
         return userModel(userId, userAddress);
     }
 

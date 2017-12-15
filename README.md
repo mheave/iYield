@@ -5,6 +5,8 @@ API to provide blockchain access to the YieldCoin smart contracts.
 
 The API is to be restricted to, and consumed by, the iYield front end and admin web applications.
 
+A copy of registry is online with Rinkeby at 0x4cca94d9e3be68f8329b6af1363b8ea2b10e4273 with account[0] as owner.
+
 Use this seed and keys during testing and development
 
 ```
