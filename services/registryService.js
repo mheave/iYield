@@ -2,14 +2,9 @@ var userModel = require('../models/userModel');
 //var Web3Service = require('../services/web3Service');
 const Eth = require('ethjs');
 
-
-
-
-// we need to import defaults
-//const eth = 
-// just include ethjs
-// and kick out web3 service
-// create the contract in the constructor and then make the call
+//@todo import defaults
+//@todo get info from file
+//have to amend these to for signing
 
 class RegistryService{
     constructor(abi, contractAddress){  
@@ -21,6 +16,13 @@ class RegistryService{
         this.contract = new this.eth.contract(this.abi).at(this.contractAddress);
         this.ownerAddress = '0x1313734d2D6625173278978DDaa7B63400462745';
         this.pvtKey = '673a54beee87f667d9204d314433b04e49011d1a4caa74bf166830d6d7570515';
+
+        //cregit ate an object with all the stuff that we need
+
+    }
+
+    async getUsers(){
+        return await this.contract.getAllBeneficiaries({from: '0x1313734d2D6625173278978DDaa7B63400462745'})
     }
 
     async getUser(address){
@@ -31,14 +33,17 @@ class RegistryService{
         return await this.contract.addParticipant(originator, benefactor, {from: '0x1313734d2D6625173278978DDaa7B63400462745', gas: 100000});
     }
 
-    // testWeb3Connection(){
-    //     let web3Svc = new Web3Service();
-    //     web3Svc.startedOk();
-    // }
+    async deleteUser(address){
+        return await this.contract.removeParticipant(address, {from: '0x1313734d2D6625173278978DDaa7B63400462745'})
+    }
 
-    // defaultAbi(){   
-    //     return 
-    // }
+    async updateUser(address){
+        return await this.contract.updateParticpant(address, {from: '0x1313734d2D6625173278978DDaa7B63400462745'})
+    }
+
+    async isValid(address){
+        return await this.contract.isValidParticipant(address)
+    }
 }
 
 module.exports = RegistryService;
