@@ -4,6 +4,9 @@
 var userModel = require('../models/userModel');
 const Eth = require('ethjs');
 const ethAbi = require('ethjs-abi');
+const _ = require('lodash')
+const sign = require('ethjs-signer').sign
+const BN = require('bignumber.js')
 //const config = require('../config')
 // Need to unlock main account on node for this to work
 //web3.personal.unlockAccount("0x1313734d2D6625173278978DDaa7B63400462745", '', 9999999);
@@ -16,8 +19,17 @@ class RegistryService{
         this.eth = new Eth(new Eth.HttpProvider('http://127.0.0.1:8545'));
         this.contract = new this.eth.contract(this.abi).at(this.contractAddress);
         this.ownerAddress = '0x1313734d2D6625173278978DDaa7B63400462745';
-        this.pvtKey = '673a54beee87f667d9204d314433b04e49011d1a4caa74bf166830d6d7570515';
+        this.pvtKey = '0x673a54beee87f667d9204d314433b04e49011d1a4caa74bf166830d6d7570515';
     }
+
+    //Get abi for a particular function
+    // fetchAbiDefinition(name) {
+    //     console.log('WTF!!!!')
+    //     this.abi.find(item => {
+    //         console.log(item)
+    //         return item.name === name
+    //     })
+    // }
 
     async getUsers(){
         return await this.contract.getAllBeneficiaries({from: this.ownerAddress})
@@ -28,17 +40,50 @@ class RegistryService{
     }
 
     async addUser(originator, benefactor){
-        //console.log(ethAbi)
-        // such a shit way to get values
-        // ask q's about scope
-        let abiMethod = this.contract.abi[6]
+
+        //let moo = this.fetchAbiDefinition('addParticipant')
+        // console.log(moo)
+
+        let abiMethod = _.find(this.contract.abi, function(item) { return item.name == 'addParticipant'})
+
+       // let abiMethod = this.contract.abi[6]
+        
+
         //@see https://github.com/ethjs/ethjs-abi/blob/e63f92966179d9017b57c9eadef78384a6899a51/src/index.js#L113
         let data = ethAbi.encodeMethod(abiMethod, [originator, benefactor])
-        
+        // harmonise how we deal with lib and this
+
+        let nonce = await this.eth.getTransactionCount(this.ownerAddress)
+        return   await this.eth.sendRawTransaction(sign({
+            to: this.contractAddress,
+            value: 0,
+            gas: new BN('300000'),
+            // when sending a raw transactions it's necessary to set the gas price, currently 0.00000002 ETH
+            gasPrice: new BN('20000000000'),
+            nonce: nonce,
+            data: data
+          }, this.pvtKey))
+
+        // this.eth.getTransactionCount(this.ownerAddress).then((nonce) => {
+        //     this.eth.sendRawTransaction(sign({
+        //       to: this.contractAddress,
+        //       value: 0,
+        //       gas: new BN('300000'),
+        //       // when sending a raw transactions it's necessary to set the gas price, currently 0.00000002 ETH
+        //       gasPrice: new BN('20000000000'),
+        //       nonce: nonce,
+        //       data: data
+        //     }, this.pvtKey)).then((txHash) => {
+        //         return txHash;
+        //       console.log('Transaction Hash', txHash);
+        //     });
+        //   });
+
+
         //@todo check this is being encoded correctly
         //can use https://github.com/ConsenSys/abi-decoder
         
-        
+       // let goo = 6
         // this is probably the problem righ here
         // try using web3 to encode
         // sendTransaction should sign for us
@@ -52,26 +97,26 @@ class RegistryService{
         // });
         
 
-        const EthereumTx = require('ethereumjs-tx')
-     //   const ethSigUtil = require('eth-sig-util')
+    //     const EthereumTx = require('ethereumjs-tx')
+    //  //   const ethSigUtil = require('eth-sig-util')
 
-        // need to get nonce first
-        // might be easier to use web3
-        let txParams = {
-            nonce: '0x268',
-            gasPrice: '0x09184e72a000',
-            gasLimit: '0x9C40',
-            to: this.contractAddress,
-            value: '0x0',
-            data: data,
-        }
+    //     // need to get nonce first
+    //     // might be easier to use web3
+    //     let txParams = {
+    //         nonce: await '0x268',
+    //         gasPrice: '0x09184e72a000',
+    //         gasLimit: '0x9C40',
+    //         to: this.contractAddress,
+    //         value: '0x0',
+    //         data: data,
+    //     }
 
-        let tx = new EthereumTx(txParams)
-        tx.sign(Buffer.from(this.pvtKey, 'hex'))
+        // let tx = new EthereumTx(txParams)
+        // tx.sign(Buffer.from(this.pvtKey, 'hex'))
 
         //let goo = 5
 
-        return await eth.sendRawTransaction(tx.serialize().toString('hex'))
+       // return await eth.sendRawTransaction(tx.serialize().toString('hex'))
         // .then((result) => {
         //     console.log('sendrawtx', result)
         // })
