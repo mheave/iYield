@@ -1,5 +1,13 @@
 # iYield-api
 
+run with 
+```node bin/www```
+make requests to 
+```localhost:3030```
+
+
+INSTRUCTIONS BELOW ARE OLD. IGNORE THEM
+=======================================
 
 API to provide blockchain access to the YieldCoin smart contracts.
 
