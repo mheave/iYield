@@ -7,6 +7,8 @@ const ethAbi = require('ethjs-abi');
 const _ = require('lodash')
 const sign = require('ethjs-signer').sign
 const BN = require('bignumber.js')
+
+// does it violate principles of class style JS to pull in config object in to a class from outside of a class?
 //const config = require('../config')
 // Need to unlock main account on node for this to work
 //web3.personal.unlockAccount("0x1313734d2D6625173278978DDaa7B63400462745", '', 9999999);
@@ -22,39 +24,44 @@ class RegistryService{
         this.pvtKey = '0x673a54beee87f667d9204d314433b04e49011d1a4caa74bf166830d6d7570515';
     }
 
-    //Get abi for a particular function
-    // fetchAbiDefinition(name) {
-    //     console.log('WTF!!!!')
-    //     this.abi.find(item => {
-    //         console.log(item)
-    //         return item.name === name
-    //     })
-    // }
-
     async getUsers(){
-        return await this.contract.getAllBeneficiaries({from: this.ownerAddress})
+        let result = await this.contract.getAllBeneficiaries({from: this.ownerAddress})
+        // only accounts for positive case
+        return {registered: result[0]}
     }
 
     async getUser(address){
         return await this.contract.getBeneficiary(address, {from: this.ownerAddress});
     }
 
+    // @todo refactor for DRY -- for sake of getting functional, copying and pasting code. 
+    // also need to derive gas prices
     async addUser(originator, benefactor){
 
-        //let moo = this.fetchAbiDefinition('addParticipant')
-        // console.log(moo)
-
         let abiMethod = _.find(this.contract.abi, function(item) { return item.name == 'addParticipant'})
-
-       // let abiMethod = this.contract.abi[6]
-        
-
-        //@see https://github.com/ethjs/ethjs-abi/blob/e63f92966179d9017b57c9eadef78384a6899a51/src/index.js#L113
         let data = ethAbi.encodeMethod(abiMethod, [originator, benefactor])
-        // harmonise how we deal with lib and this
 
         let nonce = await this.eth.getTransactionCount(this.ownerAddress)
-        return   await this.eth.sendRawTransaction(sign({
+        
+        return await this.eth.sendRawTransaction(sign({
+            to: this.contractAddress,
+            value: 0,
+            gas: new BN('300000'),
+            // when sending a raw transactions it's necessary to set the gas price, currently 0.00000002 ETH
+            gasPrice: new BN('20000000000'),
+            nonce: nonce,
+            data: data
+          }, this.pvtKey))
+    }
+
+    async deleteUser(address){
+
+        let abiMethod = _.find(this.contract.abi, function(item) { return item.name == 'removeParticipant'})
+        let data = ethAbi.encodeMethod(abiMethod, [address])
+
+        let nonce = await this.eth.getTransactionCount(this.ownerAddress)
+
+        return await this.eth.sendRawTransaction(sign({
             to: this.contractAddress,
             value: 0,
             gas: new BN('300000'),
@@ -64,94 +71,32 @@ class RegistryService{
             data: data
           }, this.pvtKey))
 
-        // this.eth.getTransactionCount(this.ownerAddress).then((nonce) => {
-        //     this.eth.sendRawTransaction(sign({
-        //       to: this.contractAddress,
-        //       value: 0,
-        //       gas: new BN('300000'),
-        //       // when sending a raw transactions it's necessary to set the gas price, currently 0.00000002 ETH
-        //       gasPrice: new BN('20000000000'),
-        //       nonce: nonce,
-        //       data: data
-        //     }, this.pvtKey)).then((txHash) => {
-        //         return txHash;
-        //       console.log('Transaction Hash', txHash);
-        //     });
-        //   });
-
-
-        //@todo check this is being encoded correctly
-        //can use https://github.com/ConsenSys/abi-decoder
-        
-       // let goo = 6
-        // this is probably the problem righ here
-        // try using web3 to encode
-        // sendTransaction should sign for us
-        // let signed = eth.sign(this.ownerAddress, data)
-        // let testSendTransaction = await eth.sendTransaction({
-        //     from: this.ownerAddress,
-        //     to: this.contractAddress,
-        //     value: '0',
-        //     gas: '3000000',
-        //     data: signed,
-        // });
-        
-
-    //     const EthereumTx = require('ethereumjs-tx')
-    //  //   const ethSigUtil = require('eth-sig-util')
-
-    //     // need to get nonce first
-    //     // might be easier to use web3
-    //     let txParams = {
-    //         nonce: await '0x268',
-    //         gasPrice: '0x09184e72a000',
-    //         gasLimit: '0x9C40',
-    //         to: this.contractAddress,
-    //         value: '0x0',
-    //         data: data,
-    //     }
-
-        // let tx = new EthereumTx(txParams)
-        // tx.sign(Buffer.from(this.pvtKey, 'hex'))
-
-        //let goo = 5
-
-       // return await eth.sendRawTransaction(tx.serialize().toString('hex'))
-        // .then((result) => {
-        //     console.log('sendrawtx', result)
-        // })
-        // .catch((error) => {
-        //     console.log('Unable to send transaction: ', error)
-        // })
-
-        // let poo = 4;
-        
-        // let result = await eth.sendRawTransaction(tx.serialize().toString('hex'))
-        // return result
-
-       // return poo
-
-         // return testSendTransaction;
-        // now we want to sign with the data
-        // then encode with data
-        // also try an example with web3
-        // eth.getCode will return bytes
-        // element 6 in eth.contract abi is this function
-        // set the gas explicitly cos internally makes bad guesstimate.
-        //return await this.contract.addParticipant(originator, benefactor, {from: this.ownerAddress, gas: 100000});
-    }
-
-    async deleteUser(address){
-        return await this.contract.removeParticipant(address, {from: this.ownerAddress})
+        //return await this.contract.removeParticipant(address, {from: this.ownerAddress})
     }
 
     async updateUser(address){
-        return await this.contract.updateParticpant(address, {from: this.ownerAddress})
+
+        let abiMethod = _.find(this.contract.abi, function(item) { return item.name == 'updateParticpant'})
+        let data = ethAbi.encodeMethod(abiMethod, [address])
+
+        let nonce = await this.eth.getTransactionCount(this.ownerAddress)
+        
+        return await this.eth.sendRawTransaction(sign({
+            to: this.contractAddress,
+            value: 0,
+            gas: new BN('300000'),
+            // when sending a raw transactions it's necessary to set the gas price, currently 0.00000002 ETH
+            gasPrice: new BN('20000000000'),
+            nonce: nonce,
+            data: data
+          }, this.pvtKey))
+
+        //return await this.contract.updateParticpant(address, {from: this.ownerAddress})
     }
 
-    async isValid(address){
-        return await this.contract.isValidParticipant(address)
-    }
+    // async isValid(address){
+    //     return await this.contract.isValidParticipant(address)
+    // }
 }
 
 module.exports = RegistryService;

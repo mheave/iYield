@@ -2,6 +2,7 @@ const express = require('express');
 let router = express.Router();
 var RegistryService = require('../services/registryService');
 
+//@todo refactor to make DRY
 
 // Get all user entries
 router.get('/registry', async function(req, res) {
@@ -34,14 +35,14 @@ router.get('/registry/:address', async function(req, res) {
 // Remove entry
 router.delete('/registry/:address', async function(req, res){
     let regService = new RegistryService();
-    let responseJson = await regService.deleteUser(address);
+    let responseJson = await regService.deleteUser(req.params.address);
     return res.json(responseJson);
 });
 
 // Update beneficiary
 router.patch('/registry/:originator/:newBeneficiary', async function(req, res){
     let regService = new RegistryService();
-    let responseJson = await regService.updateUser(originator, newBeneficiary);
+    let responseJson = await regService.updateUser(req.params.originator, req.params.newBeneficiary);
     return res.json(responseJson);
 });
 
