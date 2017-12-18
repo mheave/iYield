@@ -1,4 +1,4 @@
-const config = require('../config')
+//const config = require('../config')
 const request = require('request')
 const BigNumber = require('bignumber.js');
 const ethAccounts = require('ethjs-account')
