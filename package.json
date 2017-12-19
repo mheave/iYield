@@ -6,6 +6,7 @@
     "start": "node ./bin/www"
   },
   "dependencies": {
+    "bignumber": "^1.1.0",
     "body-parser": "~1.18.2",
     "cookie-parser": "~1.4.3",
     "debug": "~2.6.9",
@@ -16,6 +17,7 @@
     "express": "~4.15.5",
     "lodash": "^4.17.4",
     "morgan": "~1.9.0",
+    "mysql": "^2.5.4",
     "pug": "2.0.0-beta11",
     "request": "^2.83.0",
     "serve-favicon": "~2.4.5",

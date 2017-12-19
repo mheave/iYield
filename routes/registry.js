@@ -1,6 +1,6 @@
 const express = require('express');
 let router = express.Router();
-var RegistryService = require('../services/registryService');
+var RegistryService = require('../services/RegistryService');
 
 //@todo refactor to make DRY
 

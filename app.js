@@ -4,6 +4,7 @@ var bodyParser = require('body-parser')
 var logger = require('morgan');
 var securityCheck = require('./middleware/security')
 var registry = require('./routes/registry');
+var transactions = require('./routes/transactions');
 var errorModel = require('./models/errorModel');
 
 
@@ -16,6 +17,7 @@ app.use(bodyParser.urlencoded({
 }));
 
 app.use('/', registry);
+app.use('/transactions', transactions);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
