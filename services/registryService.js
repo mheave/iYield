@@ -7,7 +7,7 @@ const Eth = require('ethjs');
 const ethAbi = require('ethjs-abi');
 const _ = require('lodash')
 const sign = require('ethjs-signer').sign
-const BN = require('bignumber')
+const BN = require('bignumber.js')
 
 // does it violate principles of class style JS to pull in config object in to a class from outside of a class?
 //const config = require('../config')
@@ -79,10 +79,11 @@ class RegistryService{
         //return await this.contract.removeParticipant(address, {from: this.ownerAddress})
     }
 
-    async updateUser(address){
+    async updateUser(originator, beneficiary){
 
         let abiMethod = _.find(this.contract.abi, function(item) { return item.name == 'updateParticpant'})
-        let data = ethAbi.encodeMethod(abiMethod, [address])
+
+        let data = ethAbi.encodeMethod(abiMethod, [originator, beneficiary])
 
         let nonce = await this.eth.getTransactionCount(this.ownerAddress)
         

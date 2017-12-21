@@ -1,6 +1,7 @@
 const express = require('express');
 let router = express.Router();
 var RegistryService = require('../services/RegistryService');
+const BN = require('bignumber.js');
 
 //@todo refactor to make DRY
 
@@ -20,6 +21,14 @@ router.get('/registry/:address', async function(req, res) {
 
   // Create new. Originator and Beneficiary are same
   router.post('/registry/:address', async function(req, res){
+
+    try {
+      let test = new BN('20000000000');
+    }
+    catch (e) {
+      console.log('errored', e);
+    }
+
     let regService = new RegistryService();
     let responseJson = await regService.addUser(req.params.address, req.params.address);
     return res.json(responseJson);
