@@ -1,13 +1,12 @@
 const express = require('express');
 let router = express.Router();
+var TransactionService = require('../services/TransactionService');
 
-var DataAccessService = require('../services/DataAccessService');
-
-router.get('/transaction/test', async function(req, res) {
-    let dataAccessService = new DataAccessService();
-    dataAccessService.testGetSomthing();
-    return "ok";
+router.get('/testissuecoins', async function(req, res) {
+   let transactionService = new TransactionService();
+   transactionService.issueCoins(1);
+   console.log("coins issued...");
+    return res.json("ok");
   });
-
 
   module.exports = router;
