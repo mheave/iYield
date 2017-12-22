@@ -7,7 +7,7 @@ const Eth = require('ethjs');
 const ethAbi = require('ethjs-abi');
 const _ = require('lodash')
 const sign = require('ethjs-signer').sign
-const BN = require('bignumber')
+const BN = require('bignumber.js')
 
 // does it violate principles of class style JS to pull in config object in to a class from outside of a class?
 //const config = require('../config')
