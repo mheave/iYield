@@ -79,10 +79,11 @@ class RegistryService{
         //return await this.contract.removeParticipant(address, {from: this.ownerAddress})
     }
 
-    async updateUser(address){
+    async updateUser(originator, beneficiary){
 
         let abiMethod = _.find(this.contract.abi, function(item) { return item.name == 'updateParticpant'})
-        let data = ethAbi.encodeMethod(abiMethod, [address])
+
+        let data = ethAbi.encodeMethod(abiMethod, [originator, beneficiary])
 
         let nonce = await this.eth.getTransactionCount(this.ownerAddress)
         
