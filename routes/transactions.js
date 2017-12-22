@@ -15,7 +15,7 @@ router.get('/testissuecoins', async function(req, res) {
 
 
   router.get('/testpurchasetokens', async function(req, res){
-    let beneficiary = '0x1f9d1c123a917be18babc2516af7afc440670920';
+    let beneficiary = '0x1e93d02210f51b3cff6328a66904c833c2a1eab7';
     let endpoint = config.ethNetwork.endpoint;
     let abi = config.iyPresaleContract.abi;
     let contractAddress = config.iyPresaleContract.contractAddress;
@@ -29,5 +29,23 @@ router.get('/testissuecoins', async function(req, res) {
         return res.json("ok");
      });
   });
+
+  router.get('/gettotalmigratedtokens', async function(req, res){
+    let endpoint = config.ethNetwork.endpoint;
+    let abi = config.iyPresaleContract.abi;
+    let contractAddress = config.iyPresaleContract.contractAddress;
+    let ownerAddress = config.iyPresaleContract.ownerAddress;
+    let privateKey = config.iyPresaleContract.ownerPrivateKey;
+    
+    let transactionService = new TransactionService(endpoint, abi, contractAddress, ownerAddress, privateKey);    
+    await transactionService.getTotalMigrated(function(result){
+        console.log(result);
+        return res.json("ok");
+     });
+  });
+
+
+
+  
 
   module.exports = router;

@@ -24,7 +24,7 @@ class TransactionService {
             console.log("signed transaction executed")
             callback(result);
         });
-    }
+    }    
 
     getAbiMethodFromAbiName(methodName){
         let abiMethod = _.find(this.contract.abi, function(item) { return item.name == methodName});
@@ -41,8 +41,9 @@ class TransactionService {
         let gasPrice = new BN('100000000000 ');
         let nonce = await this.eth.getTransactionCount(this.ownerAddress)        
         await this.eth.sendRawTransaction(sign({
+            from: this.ownerAddress,
             to: this.contractAddress,
-            value: 0,
+            value: 500,
             gas: gas,
             // when sending a raw transactions it's necessary to set the gas price, currently 0.00000002 ETH
             gasPrice: gasPrice,
@@ -51,6 +52,17 @@ class TransactionService {
           }, this.privateKey), function(reponse){
               callback(reponse);
           });        
+    }
+
+    async getTotalMigrated(callback){
+        let abiMethod = this.getAbiMethodFromAbiName('weiRaised');
+        let data = ethAbi.encodeMethod(abiMethod, []);
+
+        await this.executeSignedTransaction(abiMethod, data, function(result){
+            console.log("getTotalMigrated signed transaction executed")
+            callback(result);
+        });
+        
     }
 }
 
