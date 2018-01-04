@@ -1,9 +1,10 @@
 //var config = require('../config');
 const Eth = require('ethjs');
 const ethAbi = require('ethjs-abi');
-const _ = require('lodash')
-const sign = require('ethjs-signer').sign
-const BN = require('bignumber.js')
+const _ = require('lodash');
+const sign = require('ethjs-signer').sign;
+const BN = require('bn.js');
+
 
 class TransactionService {
     constructor(httpUrl, abi, contractAddress, ownerAddress, privateKey){  
