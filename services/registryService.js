@@ -1,11 +1,6 @@
 //https://github.com/ConsenSys/eth-signer
 //https://web3js.readthedocs.io/en/1.0/web3-eth-abi.html#encodefunctioncall
 //https://github.com/ethjs/ethjs-abi/blob/e63f92966179d9017b57c9eadef78384a6899a51/src/index.js#L113
-const Eth = require('ethjs');
-const ethAbi = require('ethjs-abi');
-const _ = require('lodash');
-const sign = require('ethjs-signer').sign;
-const BN = require('bn.js');
 const ConfigurationService = require('./ConfigurationService');
 const EthService = require('./EthService')
 
@@ -22,9 +17,9 @@ const updateUserGatCost = 4712388;
 class RegistryService{
     constructor(){
         let configurationService = new ConfigurationService();
-        this.contractModel = configurationService.getRegistryContractConfig();
+        this.contractConfigModel = configurationService.getRegistryContractConfig();
         this.ethService = new EthService();     
-        this.contract = new this.ethService.eth.contract(this.contractModel.abi).at(this.contractAddress);
+        this.contract = new this.ethService.eth.contract(this.contractConfigModel.abi).at(this.contractConfigModel.contractAddress);
     }
 
     async getUsers(){
@@ -38,30 +33,20 @@ class RegistryService{
     }
 
     async addUser(originator, benefactor){
-        let data = this.createTransctionDataObject('addParticipant', [originator, benefactor]);
-        return await this.ethService.sendSignedTransaction(this.contractModel, data, 0, addUserGasCost, gasPrice);
+        let data = this.ethService.createTransctionDataObject('addParticipant', [originator, benefactor], this.contractConfigModel.abi);
+        return await this.ethService.sendSignedTransaction(this.contractConfigModel, data, 0, addUserGasCost, gasPrice);
     }
 
     async deleteUser(address){
-        let data = this.createTransctionDataObject('removeParticipant', [address]);
-        return await this.ethService.sendSignedTransaction(this.contractModel, data, 0, deleteUserGasCost, gasPrice);
+        let data = this.ethService.createTransctionDataObject('removeParticipant', [address], this.contractConfigModel.abi);
+        return await this.ethService.sendSignedTransaction(this.contractConfigModel, data, 0, deleteUserGasCost, gasPrice);
     }
 
     async updateUser(originator, beneficiary){
-        let data = this.createTransctionDataObject('updateParticpant', [originator, beneficiary]);
-        return await this.ethService.sendSignedTransaction(this.contractModel, data, 0, updateUserGatCost, gasPrice);
-    }
-
-    createTransctionDataObject(methodName, data){
-        let abiMethod = this.getMethodFromAbi(methodName);
-        let dataObject = ethAbi.encodeMethod(abiMethod, data)
-        return dataObject;
-    }
-
-    getMethodFromAbi(methodName){
-        let abiMethod = _.find(this.contract.abi, function(item) { return item.name == methodName})
-        return abiMethod;
+        let data = this.ethService.createTransctionDataObject('updateParticpant', [originator, beneficiary], this.contractConfigModel.abi);
+        return await this.ethService.sendSignedTransaction(this.contractConfigModel, data, 0, updateUserGatCost, gasPrice);
     }
 }
+
 
 module.exports = RegistryService;

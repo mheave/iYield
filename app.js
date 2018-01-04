@@ -3,8 +3,8 @@ var path = require('path');
 var bodyParser = require('body-parser')
 var logger = require('morgan');
 var securityCheck = require('./middleware/security')
-var registry = require('./routes/registry');
-var transactions = require('./routes/transactions');
+var registryRouter = require('./routes/registryRouter');
+var tokenRouter = require('./routes/tokenRouter');
 var errorModel = require('./models/errorModel');
 
 
@@ -16,8 +16,8 @@ app.use(bodyParser.urlencoded({
   extended: true
 }));
 
-app.use('/', registry);
-app.use('/transactions', transactions);
+app.use('/', registryRouter);
+app.use('/tokens', tokenRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

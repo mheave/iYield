@@ -1,4 +1,4 @@
-function contractModel(contractAddress, ownerAddress, ownerPrivateKey, abi){
+function contractConfigModel(contractAddress, ownerAddress, ownerPrivateKey, abi){
     return {
         contractAddress: contractAddress,
         ownerAddress: ownerAddress,
@@ -7,4 +7,4 @@ function contractModel(contractAddress, ownerAddress, ownerPrivateKey, abi){
     };
 }
 
-module.exports = contractModel;
+module.exports = contractConfigModel;
