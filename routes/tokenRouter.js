@@ -4,7 +4,7 @@ const TokenService = require('../services/TokenService');
 
 tokenRouter.post('/tokens/:beneficiary', async function(req, res){
     let tokenService = new TokenService();
-    let responseJson = await tokenService.buyTokens(req.params.beneficiary, req.params);
+    let responseJson = await tokenService.buyTokens(req.params.beneficiary);
     return res.json(responseJson);
 });
 

@@ -18,7 +18,6 @@ class EthService{
 
         return await this.eth.sendRawTransaction(sign({
             to: contractConfigModel.contractAddress,
-            from: contractConfigModel.ownerAddress,
             value: value,
             gas: new BN(gasCost),
             gasPrice: new BN(gasPrice),
