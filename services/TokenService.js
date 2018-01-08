@@ -21,7 +21,27 @@ class TokenService {
             return { buyTokenError: error};
         }
 
-    }    
+    }
+    
+    async currencyTokenPurchase(beneficiary, currency, currencyAmount, tokenAmount){
+        try{
+            let data = this.ethService.createTransctionDataObject('currencyTokenPurchase', [beneficiary, currency, currencyAmount, tokenAmount], this.contractConfigModel.abi)
+            return await this.ethService.sendSignedTransaction(this.contractConfigModel, data, 10, 26177, gasPrice);
+        }
+        catch(error){
+            return { currencyTokenPurchaseError: error };
+        }
+    }
+
+    async adminPermittedToPurchase(){
+        try{
+            let data = this.ethService.createTransctionDataObject('validPurchase', [], this.contractConfigModel.abi);
+            return await this.ethService.sendSignedTransaction(this.contractConfigModel, data, 0, buyTokensGasCost, gasPrice);
+        }
+        catch(error){
+            return { adminPermittedToPurchaseError: error };
+        }
+    }
 }
 
 module.exports = TokenService;

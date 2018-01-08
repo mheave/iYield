@@ -6,13 +6,13 @@ class ConfigurationService {
   getGlobalSettings(){
     return {
       ethNode: 'http://127.0.0.1:8545',
-      ycAccountAddress: '0xaa221369579bea43f407f7c3700847493fe56fee',
-      ycAccountPrivateKey: '0x3f4c5ed0c9b2a29449e4434fc35cefd3c31f27eda0cbe42501f7a611173fead2'
+      ycAccountAddress: '0x1313734d2d6625173278978ddaa7b63400462745',
+      ycAccountPrivateKey: '0x673a54beee87f667d9204d314433b04e49011d1a4caa74bf166830d6d7570515'
     };
   }
 
   getRegistryContractConfig() {
-    let contractAddress = '0x183d75423038071f36d1bb6a06074398cfb0c685';
+    let contractAddress = '0x7609abeba276c6987026fa3445e39449cf7a3f53';
     let globalSettings = this.getGlobalSettings();
     let ownerAddress = globalSettings.ycAccountAddress;
     let ownerPrivateKey = globalSettings.ycAccountPrivateKey;
@@ -24,7 +24,7 @@ class ConfigurationService {
   }
 
   getIyPresaleContractConfig(){
-    let contractAddress = '0x963c7d83f3e77eab9cce846f60c8ca97aac06504';
+    let contractAddress = '0xb507ccdd52598155bd85b330f42cba8f9288a7ec';
     let globalSettings = this.getGlobalSettings();
     let ownerAddress = globalSettings.ycAccountAddress;
     let ownerPrivateKey = globalSettings.ycAccountPrivateKey;

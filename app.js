@@ -17,7 +17,7 @@ app.use(bodyParser.urlencoded({
 }));
 
 app.use('/', registryRouter);
-app.use('/tokens', tokenRouter);
+app.use('/', tokenRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
