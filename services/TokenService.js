@@ -15,7 +15,7 @@ class TokenService {
     async buyTokens(beneficiary){
         try{
             let data = this.ethService.createTransctionDataObject('buyTokens', [beneficiary], this.contractConfigModel.abi);
-            return await this.ethService.sendSignedTransaction(this.contractConfigModel, data, 10, buyTokensGasCost, gasPrice);
+            return await this.ethService.sendSignedTransaction(this.contractConfigModel, data, 1000000000000000000, buyTokensGasCost, gasPrice);
         }
         catch(error){
             return { buyTokenError: error};
@@ -26,10 +26,20 @@ class TokenService {
     async currencyTokenPurchase(beneficiary, currency, currencyAmount, tokenAmount){
         try{
             let data = this.ethService.createTransctionDataObject('currencyTokenPurchase', [beneficiary, currency, currencyAmount, tokenAmount], this.contractConfigModel.abi)
-            return await this.ethService.sendSignedTransaction(this.contractConfigModel, data, 10, 26177, gasPrice);
+            return await this.ethService.sendSignedTransaction(this.contractConfigModel, data, 1000000000000000000, 26177, gasPrice);
         }
         catch(error){
             return { currencyTokenPurchaseError: error };
+        }
+    }
+
+    async getTokenBalanceForAddress(address){
+        try{
+            let balance = await this.contract.balances;
+            return balance;
+        }
+        catch(error){
+            return { getTokenBalanceForAddressError: error};
         }
     }
 

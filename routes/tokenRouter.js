@@ -21,5 +21,11 @@ tokenRouter.get('/tokens', async function(req, res){
     return res.json(responseJson);
 });
 
+tokenRouter.get('/tokens/balance/:address', async function(req, res){
+    let tokenService = new TokenService();
+    let responseJson = await tokenService.getTokenBalanceForAddress(req.params.address);
+    return res.json(responseJson);
+});
+
 
 module.exports = tokenRouter;
