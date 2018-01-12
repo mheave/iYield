@@ -35,8 +35,9 @@ class TokenService {
 
     async getTokenBalanceForAddress(address){
         try{
-            let balance = await this.contract.balances;
-            return balance;
+            let token = await this.contract.token();
+            let weiRaised = await this.contract.weiRaised();
+            console.log("weiRaised: " + weiRaised.toString(10));
         }
         catch(error){
             return { getTokenBalanceForAddressError: error};
