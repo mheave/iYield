@@ -7,8 +7,7 @@
 var app = require('../app');
 var debug = require('debug')('iyield-api:server');
 var http = require('http');
-const EthFilter = require('ethjs-filter');
-const EthService = require('../services/EthService');
+const BlockChainMonitorService = require('../services/BlockChainMonitorService');
 
 
 /**
@@ -93,26 +92,7 @@ function onListening() {
 }
 
 
-// let contractMonitoringService = new ContractMonitorService();
+let blockChainMonitorService = new BlockChainMonitorService();
+blockChainMonitorService.blockChecker();
 
-// let purchaseEvent = contractMonitoringService.getIYPresaleTokenPurchasedEvent();
-
-// purchaseEvent.watch(function(error, result){
-//   if (!error)
-//     console.log(result);
-// });
-
-// var ethService = new EthService();
-// let filters = new EthFilter(ethService.eth);
-
-// const filter = new filters.PendingTransactionFilter()
-// .new()
-// .then((result) => {
-//   // result <BigNumber ...> filterId
-//   console.log(result);
-// })
-// .catch((error) => {
-//   // result null
-//   console.log(error);
-// });
 
