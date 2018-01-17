@@ -1,35 +1,60 @@
 const BlockModel = require('../models/blockchain/BlockModel');
 const transactionModel = require('../models/blockchain/transactionModel');
+const TransactionService = require('./TransactionService');
+
 
 
 class BlockAnalysisService
 {
-    constructor(){ }    
+    constructor(){ 
+        this.transactionService = new TransactionService();
+    }    
 
-    analyseBlockAndReturnModel(block){
+    analyseAndProcessBlock(block){
         console.log("analysing block...");
         let blockModel = this.generateBlockModelFromBlock(block);
-        console.log(blockModel);
-        return blockModel;
+        if(blockModel != null){
+            let updatedTransactions = this.transactionService.updatePendingTransactionsFromTransactionsInBlockAndReturnUpdatedCount(blockModel);
+            if(updatedTransactions > 0){
+                console.log("iYield transactions found in block. Logs updated.");
+                console.log(blockModel);    
+                return blockModel;
+            }       
+            return null;
+        }
+        return null;
     }
 
     generateBlockModelFromBlock(block){
+        let blockNumber = block.number.toNumber();
         let blockHash = block.hash;
         let transactionsRaw = block.transactions;
-        let tranasctions = [];
+        if(transactionsRaw.length === 0){
+            return null;
+        }
+
+        let transactionList = this.generateTransactionListFromRawBlockTransactions(transactionsRaw);
+        let blockModel = BlockModel(blockNumber, blockHash, transactionList);
+        return blockModel;
+    }
+
+    generateTransactionListFromRawBlockTransactions(transactionsRaw){
+        let transactions = [];
         for (var i = 0, len = transactionsRaw.length; i < len; i++) {
             let transaction = this.generateTransactionModelFromBlockTransaction(transactionsRaw[i]);
-            tranasctions.push(transaction);
+            transactions.push(transaction);
         }
-        let blockModel = BlockModel(blockHash, tranasctions);
-        return blockModel;
+        return transactions;        
     }
 
     generateTransactionModelFromBlockTransaction(transaction){
         let hash = transaction.hash;
         let value = transaction.value;
-        return transactionModel(hash, value);
+        let blockNumber = transaction.blockNumber;
+        return transactionModel(hash, value, blockNumber);
     }
+
+
 
 }
 

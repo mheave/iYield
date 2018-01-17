@@ -1,7 +1,8 @@
-function transactionModel(hash, value){
+function transactionModel(hash, value, blockNumber){
     return {
         hash: hash,
-        value: value
+        value: value,
+        blockNumber: blockNumber
     };
 }
 

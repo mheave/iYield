@@ -1,5 +1,6 @@
-function BlockModel(hash, transactions){
+function BlockModel(blockNumber,hash, transactions){
     return {
+        blockNumber: blockNumber,
         hash: hash,
         transactions: transactions
     };

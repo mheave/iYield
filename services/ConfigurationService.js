@@ -3,6 +3,7 @@ const contractConfigModel = require('../models/contractConfigModel');
 const rinkebyUrl = 'https://rinkeby.infura.io';
 const localHostUrl = 'http://127.0.0.1:8545';
 
+
 class ConfigurationService {
   constructor(){};
 
@@ -10,7 +11,15 @@ class ConfigurationService {
     return {
       ethNode: localHostUrl,
       ycAccountAddress: '0x1313734d2D6625173278978DDaa7B63400462745',
-      ycAccountPrivateKey: '0x673a54beee87f667d9204d314433b04e49011d1a4caa74bf166830d6d7570515'
+      ycAccountPrivateKey: '0x673a54beee87f667d9204d314433b04e49011d1a4caa74bf166830d6d7570515',
+      blockCheckIntervalTime: 10000
+    };
+  }
+
+  getLocalStorageSettings(){
+    return{
+      iYieldTransactionsKey: 'iYieldTransactions',
+      pendingIYieldTransactionsKey: 'pending-iYieldTransactions'
     };
   }
 

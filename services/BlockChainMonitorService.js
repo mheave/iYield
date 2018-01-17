@@ -1,15 +1,21 @@
 const EthService = require('./EthService');
 const BlockAnalysisService = require('./BlockAnalysisService');
 const LocalStorageService = require('./LocalStorageService');
-
-const blockCheckIntervalTime = 10000;
+const ConfigurationService = require('./ConfigurationService');
 
 class BlockChainMonitorService
 {
     constructor(){
         this.blockAnalysisService = new BlockAnalysisService();
         this.localStorageService = new LocalStorageService();
+        this.setBlockchainIntervalTime();
     }    
+
+    setBlockchainIntervalTime(){
+        let configurationService = new ConfigurationService();
+        let globalSettings = configurationService.getGlobalSettings();
+        this.blockCheckIntervalTime = globalSettings.blockCheckIntervalTime;    
+    }
 
     async blockChecker(){
         let ethService = new EthService();
@@ -19,14 +25,16 @@ class BlockChainMonitorService
         this.blockChecker();
     }
 
-    analyseAndRecordBlockData(block){
-        let blockModel = this.blockAnalysisService.analyseBlockAndReturnModel(block);
-        this.localStorageService.addItemToList('blockModel', blockModel);        
+    analyseAndRecordBlockData(block){       
+        let blockModel = this.blockAnalysisService.analyseAndProcessBlock(block);
+        if(blockModel != null){
+            this.localStorageService.addItemToList('blockModel', blockModel);        
+            this.localStorageService.addItemToList('blocks', block);
+        }
     }
 
-
     sleep() {
-        return new Promise(resolve => setTimeout(resolve, blockCheckIntervalTime));
+        return new Promise(resolve => setTimeout(resolve, this.blockCheckIntervalTime));
     }
 }
 

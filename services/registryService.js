@@ -2,7 +2,9 @@
 //https://web3js.readthedocs.io/en/1.0/web3-eth-abi.html#encodefunctioncall
 //https://github.com/ethjs/ethjs-abi/blob/e63f92966179d9017b57c9eadef78384a6899a51/src/index.js#L113
 const ConfigurationService = require('./ConfigurationService');
-const EthService = require('./EthService')
+const EthService = require('./EthService');
+const TransactionService = require('./TransactionService');
+const iYieldTransactionModel = require('../models/blockchain/iYieldTransactionModel');
 
 
 // Gas
@@ -10,12 +12,13 @@ const EthService = require('./EthService')
 const gasPrice = 20000000000;
 const addUserGasCost = 4712388;
 const deleteUserGasCost = 4712388;
-const updateUserGatCost = 4712388;
+const updateUserGasCost = 4712388;
 
 // Need to unlock main account on node for this to work
 //web3.personal.unlockAccount("0x1313734d2D6625173278978DDaa7B63400462745", '', 9999999);
 class RegistryService{
     constructor(){
+        this.transactionService = new TransactionService();
         let configurationService = new ConfigurationService();
         this.contractConfigModel = configurationService.getRegistryContractConfig();
         this.ethService = new EthService();     
@@ -34,7 +37,10 @@ class RegistryService{
 
     async addUser(originator, benefactor){
         let data = this.ethService.createTransctionDataObject('addParticipant', [originator, benefactor], this.contractConfigModel.abi);
-        return await this.ethService.sendSignedTransaction(this.contractConfigModel, data, 0, addUserGasCost, gasPrice);
+        let transactionHash = await this.ethService.sendSignedTransaction(this.contractConfigModel, data, 0, addUserGasCost, gasPrice);
+        let iYieldTransaction = iYieldTransactionModel('addUser', { userToAdd: [originator, benefactor]}, transactionHash);
+        this.transactionService.addTransactionToPendingList(iYieldTransaction);
+        return iYieldTransaction;
     }
 
     async deleteUser(address){
@@ -44,7 +50,7 @@ class RegistryService{
 
     async updateUser(originator, beneficiary){
         let data = this.ethService.createTransctionDataObject('updateParticpant', [originator, beneficiary], this.contractConfigModel.abi);
-        return await this.ethService.sendSignedTransaction(this.contractConfigModel, data, 0, updateUserGatCost, gasPrice);
+        return await this.ethService.sendSignedTransaction(this.contractConfigModel, data, 0, updateUserGasCost, gasPrice);
     }
 }
 

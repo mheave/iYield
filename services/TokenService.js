@@ -1,11 +1,14 @@
 const ConfigurationService = require('./ConfigurationService');
-const EthService = require('./EthService')
+const EthService = require('./EthService');
+const TransactionService = require('./TransactionService');
+const iYieldTransactionModel = require('../models/blockchain/iYieldTransactionModel');
 
-const buyTokensGasCost = 200000;
+const buyTokensGasCost = 1000000;
 const gasPrice = 20000000000;
 
 class TokenService {
     constructor(){  
+        this.transactionService = new TransactionService();        
         let configurationService = new ConfigurationService();
         this.contractConfigModel = configurationService.getIyPresaleContractConfig();
         this.ethService = new EthService();     
@@ -15,7 +18,10 @@ class TokenService {
     async buyTokens(beneficiary){
         try{
             let data = this.ethService.createTransctionDataObject('buyTokens', [beneficiary], this.contractConfigModel.abi);
-            return await this.ethService.sendSignedTransaction(this.contractConfigModel, data, 1000000000000000000, buyTokensGasCost, gasPrice);
+            let transactionHash =  await this.ethService.sendSignedTransaction(this.contractConfigModel, data, 1000000000000000000, buyTokensGasCost, gasPrice);
+            let iYieldTransaction = iYieldTransactionModel('buyTokens', { beneficiary: beneficiary, amountInWei: 1000000000000000000}, transactionHash);
+            this.transactionService.addTransactionToPendingList(iYieldTransaction);
+            return iYieldTransaction;            
         }
         catch(error){
             return { buyTokenError: error};
@@ -26,7 +32,10 @@ class TokenService {
     async currencyTokenPurchase(beneficiary, currency, currencyAmount, tokenAmount){
         try{
             let data = this.ethService.createTransctionDataObject('currencyTokenPurchase', [beneficiary, currency, currencyAmount, tokenAmount], this.contractConfigModel.abi)
-            return await this.ethService.sendSignedTransaction(this.contractConfigModel, data, 1000000000000000000, 26177, gasPrice);
+            let transactionHash =  await this.ethService.sendSignedTransaction(this.contractConfigModel, data, 1000000000000000000, buyTokensGasCost, gasPrice);
+            let iYieldTransaction = iYieldTransactionModel('currencyTokenPurchase', { beneficiary: beneficiary, amountInWei: 1000000000000000000}, transactionHash);
+            this.transactionService.addTransactionToPendingList(iYieldTransaction);
+            return iYieldTransaction;            
         }
         catch(error){
             return { currencyTokenPurchaseError: error };
