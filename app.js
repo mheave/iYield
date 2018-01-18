@@ -3,10 +3,11 @@ var path = require('path');
 var bodyParser = require('body-parser')
 var logger = require('morgan');
 var securityCheck = require('./middleware/security')
+var errorModel = require('./models/errorModel');
+
 var registryRouter = require('./routes/registryRouter');
 var tokenRouter = require('./routes/tokenRouter');
 var transactionRouter = require('./routes/transactionRouter');
-var errorModel = require('./models/errorModel');
 
 
 var app = express();
@@ -17,6 +18,7 @@ app.use(bodyParser.urlencoded({
   extended: true
 }));
 
+// Routing
 app.use('/', registryRouter);
 app.use('/', tokenRouter);
 app.use('/', transactionRouter);
