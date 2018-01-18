@@ -25,6 +25,9 @@ class TransactionService
 
     getPendingTransactions(){
         let pendingTransctions = this.localStorageService.getItemFromStorage(this.localStorageSettings.pendingIYieldTransactionsKey);
+        if(pendingTransctions === undefined || pendingTransctions ===null || pendingTransctions.length === 0){
+            return null;
+        }        
         return pendingTransctions;
     }
 
@@ -39,7 +42,7 @@ class TransactionService
 
     indexPostitionOfTransactionInPendingList(txHash){
         let pendingTransactions = this.getPendingTransactions();
-        if(pendingTransactions === undefined || pendingTransactions === null || pendingTransactions.length === 0){
+        if(pendingTransactions === null){
             return -1;
         }   
 
@@ -51,7 +54,7 @@ class TransactionService
         let updatedTransactions = 0;
         for (var i = 0, len = currentPendingTransactions.length; i < len; i++) {
             let pendingTransaction = currentPendingTransactions[i];
-            let matchingTransactionIndex = _.indexOf(transactionHashesToUpdate, pendingTransaction.transactionHash);
+            let matchingTransactionIndex = _.findIndex(transactionHashesToUpdate, (hash) => { return hash === pendingTransaction.transactionHash});
             if(matchingTransactionIndex > -1){
                 pendingTransaction.status = transactionMinedLabel;              
                 this.localStorageService.addItemToList(this.localStorageSettings.iYieldTransactionsKey, pendingTransaction);
@@ -67,14 +70,15 @@ class TransactionService
 
     updatePendingTransactionsFromTransactionsInBlockAndReturnUpdatedCount(blockModel){
         let currentPendingTransactions = this.getPendingTransactions();       
-        if(currentPendingTransactions === undefined || currentPendingTransactions.length === 0){
+        if(currentPendingTransactions === null){
             return 0;
         }
+
         let transactionHashesToUpdate = [];
         for (var i = 0, len = currentPendingTransactions.length; i < len; i++) {
             let pendingTransaction = currentPendingTransactions[i];
-            let blockModelTransaction = _.find(blockModel.transactions, { hash: pendingTransaction.transactionHash });
-            if(blockModelTransaction != undefined && blockModelTransaction != null){
+            let blockModelTransaction = _.findIndex(blockModel.transactions, { hash: pendingTransaction.transactionHash });
+            if(blockModelTransaction > -1){
                 transactionHashesToUpdate.push(pendingTransaction.transactionHash);
             }
         }        
