@@ -28,22 +28,40 @@ class TransactionService
         return pendingTransctions;
     }
 
-    setPendingTransactionsToCompleted(transactionHashesToUpdate){
-        let pendingTransactions = this.localStorageService.getItemFromStorage(this.localStorageSettings.pendingIYieldTransactionsKey);
+    getTransactionStatus(transactionHash){
+        let pendingTransactionPosition = this.indexPostitionOfTransactionInPendingList(transactionHash);
+        if(pendingTransactionPosition>-1){
+            return {status: "pending" };
+        }
+
+        return { status: "mined or not pending" };
+    }
+
+    indexPostitionOfTransactionInPendingList(txHash){
+        let pendingTransactions = this.getPendingTransactions();
+        if(pendingTransactions === undefined || pendingTransactions === null || pendingTransactions.length === 0){
+            return -1;
+        }   
+
+        let txHashPosition = _.findIndex(pendingTransactions, {transactionHash: txHash});
+        return txHashPosition;
+    }
+
+    setPendingTransactionsToCompleted(currentPendingTransactions, transactionHashesToUpdate){
         let updatedTransactions = 0;
-        for (var i = 0, len = pendingTransactions.length; i < len; i++) {
-            let pendingTransaction = pendingTransactions[i];
+        for (var i = 0, len = currentPendingTransactions.length; i < len; i++) {
+            let pendingTransaction = currentPendingTransactions[i];
             let matchingTransactionIndex = _.indexOf(transactionHashesToUpdate, pendingTransaction.transactionHash);
             if(matchingTransactionIndex > -1){
                 pendingTransaction.status = transactionMinedLabel;              
                 this.localStorageService.addItemToList(this.localStorageSettings.iYieldTransactionsKey, pendingTransaction);
-                _.pullAt(pendingTransactions, i);
+                _.pullAt(currentPendingTransactions, i);
                 _.pullAt(transactionHashesToUpdate, matchingTransactionIndex);  
                 updatedTransactions++;
             }
         }
         if(updatedTransactions > 0){
-            this.localStorageService.refreshStore(this.localStorageSettings.pendingIYieldTransactionsKey, pendingTransactions)
+            this.localStorageService.refreshStore(this.localStorageSettings.pendingIYieldTransactionsKey, currentPendingTransactions)
         }
     }
 
@@ -61,7 +79,7 @@ class TransactionService
             }
         }        
         if(transactionHashesToUpdate.length > 0){
-            this.setPendingTransactionsToCompleted(transactionHashesToUpdate);
+            this.setPendingTransactionsToCompleted(currentPendingTransactions, transactionHashesToUpdate);
         }
         return transactionHashesToUpdate.length;
     }    

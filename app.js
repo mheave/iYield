@@ -5,6 +5,7 @@ var logger = require('morgan');
 var securityCheck = require('./middleware/security')
 var registryRouter = require('./routes/registryRouter');
 var tokenRouter = require('./routes/tokenRouter');
+var transactionRouter = require('./routes/transactionRouter');
 var errorModel = require('./models/errorModel');
 
 
@@ -18,6 +19,7 @@ app.use(bodyParser.urlencoded({
 
 app.use('/', registryRouter);
 app.use('/', tokenRouter);
+app.use('/', transactionRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

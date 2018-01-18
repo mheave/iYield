@@ -15,6 +15,7 @@
     "ethjs-account": "^0.1.4",
     "ethjs-filter": "^0.1.5",
     "ethjs-signer": "^0.1.1",
+    "ethjs-unit": "^0.1.6",
     "express": "~4.15.5",
     "lodash": "^4.17.4",
     "morgan": "~1.9.0",
