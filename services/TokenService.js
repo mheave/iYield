@@ -12,6 +12,7 @@ class TokenService {
         this.transactionService = new TransactionService();        
         let configurationService = new ConfigurationService();
         this.contractConfigModel = configurationService.getIyPresaleContractConfig();
+        this.mintableContractConfig = configurationService.getMintableTokenContractConfig();
         this.ethService = new EthService();     
         this.contract = new this.ethService.eth.contract(this.contractConfigModel.abi).at(this.contractConfigModel.contractAddress);   
     }
@@ -33,9 +34,10 @@ class TokenService {
 
     async getTokenBalanceForAddress(address){
         try{
-            let token = await this.contract.token();
-            let weiRaised = await this.contract.weiRaised();
-            console.log("weiRaised: " + weiRaised.toString(10));
+            let mintableContract = await this.ethService.getContractFromConfig(this.mintableContractConfig);
+            let balanceResult = await mintableContract.balanceOf(address);
+            let balance = unit.fromWei(balanceResult.balance.toString(10), 'ether');
+            return { balance: balance };
         }
         catch(error){
             return { getTokenBalanceForAddressError: error};

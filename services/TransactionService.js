@@ -34,10 +34,10 @@ class TransactionService
     getTransactionStatus(transactionHash){
         let pendingTransactionPosition = this.indexPostitionOfTransactionInPendingList(transactionHash);
         if(pendingTransactionPosition>-1){
-            return {status: "pending" };
+            return {status: transactionPendingLabel };
         }
 
-        return { status: "mined or not pending" };
+        return { status: transactionMinedLabel };
     }
 
     indexPostitionOfTransactionInPendingList(txHash){

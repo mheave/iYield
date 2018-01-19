@@ -10,7 +10,11 @@ class EthService{
         let configurationService = new ConfigurationService();
         let globalConfig = configurationService.getGlobalSettings();        
         this.eth = new Eth(new Eth.HttpProvider(globalConfig.ethNode));        
+    }
 
+    async getContractFromConfig(contractConfigModel){
+        let contract = await this.eth.contract(contractConfigModel.abi).at(contractConfigModel.contractAddress); 
+        return contract;
     }
 
     async sendSignedTransaction(contractConfigModel, data, value, gasCost, gasPrice){
