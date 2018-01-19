@@ -1,0 +1,9 @@
+CREATE TABLE `yieldcoinapi`.`t_transaction_queue` (
+  `idt_transaction_queue` INT NOT NULL,
+  `tx_id` VARCHAR(45) NOT NULL,
+  `contract_id` VARCHAR(45) NULL,
+  `payload` BLOB NULL,
+  `status` VARCHAR(45) NULL,
+  `created` DATETIME DEFAULT CURRENT_TIMESTAMP,
+  `updated` DATETIME NULL,
+  PRIMARY KEY (`idt_transaction_queue`));

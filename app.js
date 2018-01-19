@@ -3,18 +3,25 @@ var path = require('path');
 var bodyParser = require('body-parser')
 var logger = require('morgan');
 var securityCheck = require('./middleware/security')
-var registry = require('./routes/registry');
 var errorModel = require('./models/errorModel');
+
+var registryRouter = require('./routes/registryRouter');
+var tokenRouter = require('./routes/tokenRouter');
+var transactionRouter = require('./routes/transactionRouter');
 
 
 var app = express();
 app.use(logger('dev'));
-app.use(securityCheck("cwc"));
+//app.use(securityCheck("cwc"));
 app.use( bodyParser.json() );       
 app.use(bodyParser.urlencoded({ 
   extended: true
-})); 
-app.use('/registry', registry);
+}));
+
+// Routing
+app.use('/', registryRouter);
+app.use('/', tokenRouter);
+app.use('/', transactionRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
