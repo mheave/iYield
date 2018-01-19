@@ -14,7 +14,6 @@ class TokenService {
         this.contractConfigModel = configurationService.getIyPresaleContractConfig();
         this.mintableContractConfig = configurationService.getMintableTokenContractConfig();
         this.ethService = new EthService();     
-        this.contract = new this.ethService.eth.contract(this.contractConfigModel.abi).at(this.contractConfigModel.contractAddress);   
     }
 
    
