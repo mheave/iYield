@@ -21,8 +21,11 @@ class TokenService {
         try{
             let tokenAmountInWei = unit.toWei(tokenAmount, 'ether');
             let data = this.ethService.createTransctionDataObject('currencyTokenPurchase', [beneficiary, currency, currencyAmount, tokenAmountInWei], this.contractConfigModel.abi)
-            let transactionHash =  await this.ethService.sendSignedTransaction(this.contractConfigModel, data, 0, buyTokensGasCost, gasPrice);
-            let iYieldTransaction = iYieldTransactionModel('currencyTokenPurchase', { beneficiary: beneficiary, currency: currency, currencyAmount: currencyAmount, tokenAmount: tokenAmount}, transactionHash);
+            let transactionResult =  await this.ethService.sendSignedTransaction(this.contractConfigModel, data, 0, buyTokensGasCost, gasPrice);
+            if(!transactionResult.success){
+                throw transactionResult.error;
+            }
+            let iYieldTransaction = iYieldTransactionModel('currencyTokenPurchase', { beneficiary: beneficiary, currency: currency, currencyAmount: currencyAmount, tokenAmount: tokenAmount}, transactionResult.txHash);
             this.transactionService.addTransactionToPendingList(iYieldTransaction);
             return iYieldTransaction;            
         }
