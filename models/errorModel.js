@@ -1,8 +1,8 @@
-function errorModel(route, msg, data){
+function errorModel(method, errMsg, params){
     return {
-        route: route,
-        msg: msg,
-        data: data
+        method: method,
+        errMsg: errMsg,
+        params: params
     };
 }
 

@@ -5,6 +5,7 @@ const ConfigurationService = require('./ConfigurationService');
 const EthService = require('./EthService');
 const TransactionService = require('./TransactionService');
 const iYieldTransactionModel = require('../models/blockchain/iYieldTransactionModel');
+const errorModel = require('../models/errorModel');
 
 
 // Gas
@@ -36,11 +37,19 @@ class RegistryService{
     }
 
     async addUser(originator, benefactor){
-        let data = this.ethService.createTransctionDataObject('addParticipant', [originator, benefactor], this.contractConfigModel.abi);
-        let transactionHash = await this.ethService.sendSignedTransaction(this.contractConfigModel, data, 0, addUserGasCost, gasPrice);
-        let iYieldTransaction = iYieldTransactionModel('addUser', { userToAdd: [originator, benefactor]}, transactionHash);
-        this.transactionService.addTransactionToPendingList(iYieldTransaction);
-        return iYieldTransaction;
+        try{
+            let data = this.ethService.createTransctionDataObject('addParticipant', [originator, benefactor], this.contractConfigModel.abi);
+            let transactionResult = await this.ethService.sendSignedTransaction(this.contractConfigModel, data, 0, addUserGasCost, gasPrice);
+            if(!transactionResult.success){
+                throw transactionResult.error;
+            }
+            let iYieldTransaction = iYieldTransactionModel('addUser', { userToAdd: [originator, benefactor]}, transactionResult.txHash);
+            this.transactionService.addTransactionToPendingList(iYieldTransaction);
+            return iYieldTransaction;
+        }
+        catch(error){
+            return errorModel("RegistryService.addUser", error, { originator: originator, benefactor: benefactor});
+        }
     }
 
     async deleteUser(address){

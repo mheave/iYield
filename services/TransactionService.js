@@ -1,6 +1,7 @@
 const transactionModel = require('../models/blockchain/transactionModel');
 const LocalStorageService = require('./LocalStorageService');
 const ConfigurationService = require('./ConfigurationService');
+
 const _ = require('lodash');
 
 const transactionPendingLabel = 'pending';
