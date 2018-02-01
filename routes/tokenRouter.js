@@ -5,7 +5,7 @@ const apiResponseModel = require('../models/apiResponseModel');
 
 
 
-tokenRouter.post('/tokens/purchase/:beneficiary.:currency.:currencyAmount.:tokenAmount', async function(req, res){
+tokenRouter.post('/tokens/purchase/:beneficiary/:currency/:currencyAmount/:tokenAmount', async function(req, res){
     let tokenService = new TokenService();
     let currencyPurchaseResponse = await tokenService.currencyTokenPurchase(req.params.beneficiary, req.params.currency, req.params.currencyAmount, req.params.tokenAmount);
     let responseModel = apiResponseModel(currencyPurchaseResponse);

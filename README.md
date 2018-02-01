@@ -12,7 +12,7 @@ Instructions
 4) Endpoints - Parameters can be seen in these requests and can also be found in the associated endpoints and service calls.
 
 i) http://localhost:3030/registry/{accountaddress} - POST
-ii) http://localhost:3030/tokens/purchase/{beneficiaryaddress}.0x02345.{amounts}.{amountoftokens} - POST [the hex 0x02345 is the currency code for GBP. todo: Need to reconcile list]
+ii) http://localhost:3030/tokens/purchase/{beneficiaryaddress}/0x02345/{amounts}/{amountoftokens} - POST [the hex 0x02345 is the currency code for GBP. todo: Need to reconcile list]
 iii) http://localhost:3030/tokens/balance/{accountaddress} - GET
 iv) http://localhost:3030/transaction/{transactionhash} - GET
 
@@ -77,7 +77,7 @@ The following PostMan export show the endpoints are currently available.
 					"raw": ""
 				},
 				"url": {
-					"raw": "http://localhost:3030/tokens/purchase/0x03c53c2941ebb7c743dd1d4f1b80405c532fc458.0x02345.500.500",
+					"raw": "http://localhost:3030/tokens/purchase/0x03c53c2941ebb7c743dd1d4f1b80405c532fc458/0x02345/500/500",
 					"protocol": "http",
 					"host": [
 						"localhost"
