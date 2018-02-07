@@ -1,4 +1,4 @@
-const BlockModel = require('../models/blockchain/BlockModel');
+const BlockModel = require('../models/blockchain/blockModel');
 const transactionModel = require('../models/blockchain/transactionModel');
 const TransactionService = require('./TransactionService');
 
