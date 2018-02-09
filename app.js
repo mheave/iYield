@@ -43,4 +43,10 @@ app.use(function(err, req, res, next) {
   res.json(errorResponse);
 });
 
+process.on('unhandledRejection', error => {
+  // Will print "unhandledRejection err is not defined"
+  console.log('unhandledRejection', error.message);
+});
+
+
 module.exports = app;

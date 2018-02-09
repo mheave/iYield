@@ -2,6 +2,7 @@ const Eth = require('ethjs');
 const ethAbi = require('ethjs-abi');
 const sign = require('ethjs-signer').sign
 const ConfigurationService = require('./ConfigurationService');
+const transactionResult = require('../models/blockchain/transactionResult');
 const BN = require('bn.js');
 const _ = require('lodash');
 
@@ -20,14 +21,20 @@ class EthService{
     async sendSignedTransaction(contractConfigModel, data, value, gasCost, gasPrice){
         let nonce = await this.getCurrentNonceForAccount(contractConfigModel.ownerAddress);
 
-        return await this.eth.sendRawTransaction(sign({
+        let signedTransaction = sign({
             to: contractConfigModel.contractAddress,
             value: value,
             gas: new BN(gasCost),
             gasPrice: new BN(gasPrice),
             nonce: nonce,
             data: data
-          }, contractConfigModel.ownerPrivateKey))
+          }, contractConfigModel.ownerPrivateKey);
+        
+
+        let transaction = await this.eth.sendRawTransaction(signedTransaction).catch((err) => {return err;});
+        let txResult = transactionResult(transaction);
+
+        return txResult;
     }
 
     async getCurrentNonceForAccount(account){

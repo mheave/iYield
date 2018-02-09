@@ -1,24 +1,135 @@
-# iYield-api
+Instructions
+------------
 
-run with 
-```node bin/www```
-make requests to 
-```localhost:3030```
+1) Check /services/ConfigurationService.js for network connections and account details. At time of editing (31/1/18) these are the Rinkeby test network. The settings can be changed to connect to a locally connected node. In addition to this the configuration objects are in the same file and contain account and contract details (such as address).
+
+2) run via npm start
+
+3) the console will display details on block checking and diagnostics while running
+
+3.5) additional logs and working local storage is done via text files that live in /.node-persist
+
+4) Endpoints - Parameters can be seen in these requests and can also be found in the associated endpoints and service calls.
+
+i) http://localhost:3030/registry/{accountaddress} - POST
+ii) http://localhost:3030/tokens/purchase/{beneficiaryaddress}/0x02345/{amounts}/{amountoftokens} - POST [the hex 0x02345 is the currency code for GBP. todo: Need to reconcile list]
+iii) http://localhost:3030/tokens/balance/{accountaddress} - GET
+iv) http://localhost:3030/transaction/{transactionhash} - GET
+
+NOTE: transactions i and ii are writes and therefore are subject to nonce ordering. Plese wait 15s between transactions until queuing is resolved.
 
 
-INSTRUCTIONS BELOW ARE OLD. IGNORE THEM
-=======================================
+PostMan Export
+--------------
 
-API to provide blockchain access to the YieldCoin smart contracts.
+The following PostMan export show the endpoints are currently available.
 
-The API is to be restricted to, and consumed by, the iYield front end and admin web applications.
+{
+	"info": {
+		"name": "iYieldContractTesting",
+		"_postman_id": "f7805a22-fa4c-b59b-6529-8dc3250475e3",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Add 0x03c53c2941ebb7c743dd1d4f1b80405c532fc458 to registry",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://localhost:3030/registry/0x03c53c2941ebb7c743dd1d4f1b80405c532fc458",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3030",
+					"path": [
+						"registry",
+						"0x03c53c2941ebb7c743dd1d4f1b80405c532fc458"
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Token purchase for 0x03c53c2941ebb7c743dd1d4f1b80405c532fc458",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://localhost:3030/tokens/purchase/0x03c53c2941ebb7c743dd1d4f1b80405c532fc458/0x02345/500/500",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3030",
+					"path": [
+						"tokens",
+						"purchase",
+						"0x03c53c2941ebb7c743dd1d4f1b80405c532fc458.0x02345.500.500"
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Check transaction status for 0xb026332a9980efa48d70e7cdc4fee6505b803a05554a812e30b293727e6cd08d",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "http://localhost:3030/transaction/0xb026332a9980efa48d70e7cdc4fee6505b803a05554a812e30b293727e6cd08d",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3030",
+					"path": [
+						"transaction",
+						"0xb026332a9980efa48d70e7cdc4fee6505b803a05554a812e30b293727e6cd08d"
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		}
+	]
+}
 
-A copy of registry is online with Rinkeby at 0x4cca94d9e3be68f8329b6af1363b8ea2b10e4273 with account[0] as owner.
 
-Use this seed and keys during testing and development
 
-```
-testrpc -m "adult decade sing mule reject spy clever end give door know neither"
+
+Rinkeby and Account Settings
+-----------------------------
+
+mintable token contract: 0x835c42aaf82e1c49367a4fa012a8f76c50f5caff
+registry contract: 0xaa148d4490a4d6b83c7c26ad16f31dda21c3895a
+presale contract: 0xd6d387590973f6da8e264d7ab519efaa7e1f5520
+
+
+
 
 Available Accounts
 ==================
@@ -45,9 +156,3 @@ Private Keys
 (7) 29b55668f1910ca114c65b88d45a4de181b9b663584423b9582512d510da3181
 (8) ad9ebe82b8ab3bf839a938400b7b1e51d87bb73b6214e075c2c0d41342f655b3
 (9) 4d588af80487a8aaf908d15ac56f4ab80f6c05f387736044d1f4e7b978ea08e2
-
-HD Wallet
-==================
-Mnemonic:      adult decade sing mule reject spy clever end give door know neither
-Base HD Path:  m/44'/60'/0'/0/{account_index}
-```
