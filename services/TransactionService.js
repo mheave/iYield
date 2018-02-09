@@ -15,7 +15,7 @@ class TransactionService
     }
 
     setLocalStorageKeys(){      
-        let configurationService = new ConfigurationService();
+        let configurationService = config;
         this.localStorageSettings = configurationService.getLocalStorageSettings();
     }
 

@@ -20,7 +20,7 @@ const updateUserGasCost = 4712388;
 class RegistryService{
     constructor(){
         this.transactionService = new TransactionService();
-        let configurationService = new ConfigurationService();
+        let configurationService = config;
         this.contractConfigModel = configurationService.getRegistryContractConfig();
         this.ethService = new EthService();     
         this.contract = new this.ethService.eth.contract(this.contractConfigModel.abi).at(this.contractConfigModel.contractAddress);

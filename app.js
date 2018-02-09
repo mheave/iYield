@@ -8,6 +8,23 @@ var errorModel = require('./models/errorModel');
 var registryRouter = require('./routes/registryRouter');
 var tokenRouter = require('./routes/tokenRouter');
 var transactionRouter = require('./routes/transactionRouter');
+const ConfigurationService = require('./services/ConfigurationService');
+
+// Watch for keyfile
+var watch = require('node-watch');
+watch('keydrop', { recursive: true }, function(evt, name) {
+
+  var fs = require('fs');
+
+  fs.readFile(name, 'utf8', function(err, contents) {
+
+    console.log(contents);
+    config.setGlobalSettings({ycAccountPrivateKey : contents});
+    fs.unlink(item, function(){});
+
+  });
+
+});
 
 
 var app = express();
@@ -17,6 +34,8 @@ app.use( bodyParser.json() );
 app.use(bodyParser.urlencoded({ 
   extended: true
 }));
+
+config = new ConfigurationService();
 
 // Routing
 app.use('/', registryRouter);
