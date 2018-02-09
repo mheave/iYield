@@ -12,7 +12,7 @@ const gasPrice = 20000000000;
 class TokenService {
     constructor(){  
         this.transactionService = new TransactionService();        
-        let configurationService = new ConfigurationService();
+        let configurationService = config;
         this.contractConfigModel = configurationService.getIyPresaleContractConfig();
         this.mintableContractConfig = configurationService.getMintableTokenContractConfig();
         this.ethService = new EthService();     

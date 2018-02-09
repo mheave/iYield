@@ -8,7 +8,7 @@ const _ = require('lodash');
 
 class EthService{
     constructor(){
-        let configurationService = new ConfigurationService();
+        let configurationService = config;
         let globalConfig = configurationService.getGlobalSettings();        
         this.eth = new Eth(new Eth.HttpProvider(globalConfig.ethNode));        
     }
