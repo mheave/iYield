@@ -8,7 +8,7 @@ class NonceService{
         this.localStorageSettings = this.localStorageService.localStorageSettings;
     }
 
-    async serviceStartNonceReconciliation(){
+    async syncNoncesWithNetwork(){
         let addressList = this.getArrayOfContractAddresses();                
         for(let k = 0; k < addressList.length; k++){            
             let address = addressList[k];

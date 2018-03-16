@@ -94,16 +94,7 @@ function onListening() {
 
 
 let blockChainMonitorService = new BlockChainMonitorService();
-let nonceServiceInstance = new NonceService();
-
-( async () => {
-  console.log("Reconciling Nonce values for contracts....");
-  await nonceServiceInstance.serviceStartNonceReconciliation();
-  console.log("Nonce reconciliation complete.");
-  
-  console.log("Starting block checker process...")
-  blockChainMonitorService.blockChecker();
-})()
+blockChainMonitorService.blockChecker();
 
 
 

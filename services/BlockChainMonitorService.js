@@ -2,12 +2,14 @@ const EthService = require('./EthService');
 const BlockAnalysisService = require('./BlockAnalysisService');
 const LocalStorageService = require('./LocalStorageService');
 const ConfigurationService = require('./ConfigurationService');
+const NonceService = require('./NonceService');
 
 class BlockChainMonitorService
 {
     constructor(){
         this.blockAnalysisService = new BlockAnalysisService();
         this.localStorageService = new LocalStorageService();
+        this.nonceService = new NonceService();
         this.setBlockchainIntervalTime();
     }    
 
@@ -21,9 +23,11 @@ class BlockChainMonitorService
         let ethService = new EthService();
         let block = await ethService.eth.getBlockByNumber('latest', true);
         this.analyseAndRecordBlockData(block);
+        console.log("Reconciling Nonce values for contracts....");
+        await this.nonceService.syncNoncesWithNetwork();
         await this.sleep();
         this.blockChecker();
-    }
+    }    
 
     analyseAndRecordBlockData(block){       
         let blockModel = this.blockAnalysisService.analyseAndProcessBlock(block);

@@ -26,10 +26,12 @@ class RegistryService{
         this.contract = new this.ethService.eth.contract(this.contractConfigModel.abi).at(this.contractConfigModel.contractAddress);
     }
 
-    async getUsers(){
+    async getAllBeneficiaries(){
         let result = await this.contract.getAllBeneficiaries({from: this.ownerAddress})
-        // only accounts for positive case
-        return {registered: result[0]}
+        if(result[0].length && result[0].length > 0){
+            return result[0];
+        }
+        return [];
     }
 
     async getUser(address){
