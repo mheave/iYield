@@ -8,6 +8,7 @@ var app = require('../app');
 var debug = require('debug')('iyield-api:server');
 var http = require('http');
 const BlockChainMonitorService = require('../services/BlockChainMonitorService');
+const NonceService = require('../services/NonceService');
 
 
 /**
@@ -93,6 +94,16 @@ function onListening() {
 
 
 let blockChainMonitorService = new BlockChainMonitorService();
-blockChainMonitorService.blockChecker();
+let nonceServiceInstance = new NonceService();
+
+( async () => {
+  console.log("Reconciling Nonce values for contracts....");
+  await nonceServiceInstance.serviceStartNonceReconciliation();
+  console.log("Nonce reconciliation complete.");
+  
+  console.log("Starting block checker process...")
+  blockChainMonitorService.blockChecker();
+})()
+
 
 
