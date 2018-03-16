@@ -49,20 +49,9 @@ class TokenService {
     }
 
     async migrateTokens(){
-        return { tokensMinted : true};
-
-
+        return { accountsProcessed: 88, totalTokensMinted: 500};
     }
 
-    // async adminPermittedToPurchase(){
-    //     try{
-    //         let data = this.ethService.createTransctionDataObject('validPurchase', [], this.contractConfigModel.abi);
-    //         return await this.ethService.sendSignedTransaction(this.contractConfigModel, data, 0, buyTokensGasCost, gasPrice);
-    //     }
-    //     catch(error){
-    //         return { adminPermittedToPurchaseError: error };
-    //     }
-    // }
 }
 
 module.exports = TokenService;
