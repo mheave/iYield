@@ -25,5 +25,12 @@ tokenRouter.get('/tokens/balance/:address', async function(req, res){
     return res.json(responseModel);
 });
 
+tokenRouter.post('/tokens/migrate', async function(req, res){
+    let tokenService = new TokenService();
+    let migratedTokens = await tokenService.migrateTokens();
+    let responseModel = apiResponseModel(migratedTokens);
+    return res.json(responseModel);
+})
+
 
 module.exports = tokenRouter;

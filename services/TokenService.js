@@ -48,6 +48,12 @@ class TokenService {
         }
     }
 
+    async migrateTokens(){
+        return { tokensMinted : true};
+
+
+    }
+
     // async adminPermittedToPurchase(){
     //     try{
     //         let data = this.ethService.createTransctionDataObject('validPurchase', [], this.contractConfigModel.abi);
