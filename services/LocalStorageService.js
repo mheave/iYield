@@ -27,6 +27,17 @@ class LocalStorageService
         this.saveItemToStorage(listKey, itemArray);
     }
 
+    addOrUpdateItemInStorage(key, item){
+        let existingItem = this.getItemFromStorage(key);
+
+        if(existingItem === undefined || existingItem === null){
+            this.saveItemToStorage(key, item);            
+        }
+        else{
+            this.refreshStore(key, item);
+        }
+    }
+
     refreshStore(key, item){
         storage.removeItemSync(key);
         this.saveItemToStorage(key, item);

@@ -18,8 +18,11 @@ class EthService{
         return contract;
     }
 
-    async sendSignedTransaction(contractConfigModel, data, value, gasCost, gasPrice){
-        let nonce = await this.getCurrentNonceForAccount(contractConfigModel.ownerAddress);
+    async sendSignedTransaction(nonce, contractConfigModel, data, value, gasCost, gasPrice){
+
+        /*
+            Existing calls need to get teh nonce and pass it in now!
+        */
 
         let signedTransaction = sign({
             to: contractConfigModel.contractAddress,

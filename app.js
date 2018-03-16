@@ -8,6 +8,11 @@ var errorModel = require('./models/errorModel');
 var registryRouter = require('./routes/registryRouter');
 var tokenRouter = require('./routes/tokenRouter');
 var transactionRouter = require('./routes/transactionRouter');
+var EthService =  require('./services/EthService');
+var NonceService = require('./services/NonceService');
+
+
+
 
 
 var app = express();

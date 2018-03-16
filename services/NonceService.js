@@ -1,54 +1,45 @@
-var DataAccessService = require('../services/DataAccessService');
-var contractNonceModelDto = require('../models/DTO/contractNonceModel');
-
+const EthService = require('./EthService');
+const LocalStorageService = require('./LocalStorageService');
 
 class NonceService{
     constructor(){
-        this.dataAccessService = new DataAccessService();
+        this.localStorageService = new LocalStorageService();
     }
 
-    async getCurrentNonceForContract(contractId, callback){
-        console.log("getCurrentNonceForContract...");
+    async serviceStartNonceReconciliation(){
+        let localStorageSettings = this.localStorageService.localStorageSettings;
+        let addressList = [localStorageSettings.registryContractAddress, localStorageSettings.mintableTokenContractAddress, localStorageSettings.iyPresaleContractAddress]
         
-        let currentNonce = await this.getNonceDtoForContract(contractId, function(rowid) {
-            console.log('callback: ' + rowid);
-            callback(rowid);
-        });
-        console.log("current nonce:" + currentNonce);
-        return currentNonce;
-    }
+        for(let k = 0; k < addressList.length; k++){
+            let address = addressList[k];
+            let networkNonce = await this.getCurrentNetworkNonceForAddress(address);
+            let localNonce = this.getCurrentNonceFromLocalStorage(address);
 
-    
+            if(networkNonce === localNonce){
+                continue;
+            }
 
-    async getNonceDtoForContract(contractId, callback){
-       // try{
-            let rowData = {};
-            let getContractSql = 'select * from yieldcoinapi.t_contract_nonce where contract_id=' + contractId + ' limit 1;';      
-            console.log("run query:" + getContractSql);
-            await this.dataAccessService.connection.query(getContractSql,{}, function(err, res){
-                console.log(res);
-                rowData =  res;
-                callback(res);
-            });
-            return rowData;
-    }    
-
-    convertRowToDtoObject(rows){
-        if(rows != undefined && rows != null && rows.length > 0){
-            let id = rows[0].idt_contract_nonce;
-            let contractId = row[0].contract_id;
-            let currentNonceValue = row[0].current_nonce_value;
-            let currentLastUpdated = row[0].current_last_updated;
-            let allocatedNonceValue = row[0].allocated_nonce_value;
-            let allocatedLastUpdated = row[0].allocated_last_updated;
-
-            let contractNonceDto = contractNonceModelDto(id, contractId, currentNonceValue, currentLastUpdated, allocatedNonceValue, allocatedLastUpdated);        
-            console.log(contractNonceDto);
-            return contractNonceDto;
+            this.setCurrentNonceInLocalStorage(address, networkNonce);            
         }
-
-        return null;
     }
+
+    async getCurrentNetworkNonceForAddress(address){
+        let ethService = new EthService();     
+        let nonce = await ethService.getCurrentNonceForAccount(address);
+        let nonceValue = nonce.words[0];
+        return nonceValue;
+    }
+   
+    getCurrentNonceFromLocalStorage(address){
+        let nonceValue = this.localStorageService.getItemFromStorage(address);
+        return 
+    }
+
+    setCurrentNonceInLocalStorage(address, nonce){
+        this.localStorageService.addOrUpdateItemInStorage(address, nonce);
+    }
+
+
 }
 
 module.exports = NonceService;
