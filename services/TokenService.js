@@ -26,11 +26,11 @@ class TokenService {
         try{
             let tokenAmountInWei = unit.toWei(tokenAmount, 'ether');
             let data = this.ethService.createTransctionDataObject('currencyTokenPurchase', [beneficiary, currency, currencyAmount, tokenAmountInWei], this.contractConfigModel.abi)
-            let transactionResult =  await this.ethService.sendSignedTransaction(this.contractConfigModel, data, 0, buyTokensGasCost, gasPrice);
-            if(!transactionResult.success){
-                throw transactionResult.error;
+            let txResult = await this.sendTokenServiceTransaction(data, buyTokensGasCost, gasPrice);   
+            if(!txResult.success){
+                throw txResult.error;
             }
-            let iYieldTransaction = iYieldTransactionModel('currencyTokenPurchase', { beneficiary: beneficiary, currency: currency, currencyAmount: currencyAmount, tokenAmount: tokenAmount}, transactionResult.txHash);
+            let iYieldTransaction = iYieldTransactionModel('currencyTokenPurchase', { beneficiary: beneficiary, currency: currency, currencyAmount: currencyAmount, tokenAmount: tokenAmount}, txResult.txHash);
             this.transactionService.addTransactionToPendingList(iYieldTransaction);
             return iYieldTransaction;            
         }
@@ -54,27 +54,31 @@ class TokenService {
     async migrateTokens(){
         let registryService = new RegistryService();
         let beneficiaries = await registryService.getAllBeneficiaries();
-        console.log("beneficiaries found");
-
         if(beneficiaries.length === 0){
             return;
         }
 
         let migrationResult = [];
-
         for(let b = 0; b < beneficiaries.length; b++){
             var beneficiaryAddress = beneficiaries[b];
             console.log("Migrate account: " + beneficiaryAddress);
-            let txNonce = this.nonceService.getNextAvailableNonceForAddress(this.contractConfigModel.contractAddress);
             let data = this.ethService.createTransctionDataObject('migrateAccount', [beneficiaryAddress], this.contractConfigModel.abi)
-            this.nonceService.setLastSentTransactionNonceForAddress(beneficiaryAddress, txNonce);
-            let transactionResult =  await this.ethService.sendSignedTransaction(txNonce, this.contractConfigModel, data, 0, buyTokensGasCost*2, gasPrice);   
-            migrationResult.push({ beneficiary: beneficiaryAddress, txResult: transactionResult});
-            console.log(transactionResult);
+            let txResult = await this.sendTokenServiceTransaction(data, buyTokensGasCost*2, gasPrice);   
+            migrationResult.push({ beneficiary: beneficiaryAddress, txResult: txResult});
+            console.log(txResult);
         }
 
         return { report: migrationResult, accountsProcessed: 88, totalTokensMinted: 500};
     }
+
+
+    async sendTokenServiceTransaction(data, gasCost, gasPrice){
+        let txNonce = this.nonceService.getNextAvailableNonceForAddress(this.contractConfigModel.ownerAddress);
+        this.nonceService.setLastSentTransactionNonceForAddress(this.contractConfigModel.ownerAddress, txNonce);
+        let txResult =  await this.ethService.sendSignedTransaction(txNonce, this.contractConfigModel, data, 0, gasCost, gasPrice);   
+        return txResult;
+    }
+
 
 }
 

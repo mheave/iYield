@@ -9,11 +9,11 @@ class NonceService{
     }
 
     async syncNoncesWithNetwork(){
-        let addressList = this.getArrayOfContractAddresses();                
-        for(let k = 0; k < addressList.length; k++){            
-            let address = addressList[k];
-            let networkNonce = await this.getCurrentNetworkNonceForAddress(address);            
-            this.reconcileNonceForAddress(address, networkNonce);           
+        let contracts = this.getCurrentContracts();                
+        for(let k = 0; k < contracts.length; k++){            
+            let contract = contracts[k];
+            let networkNonce = await this.getCurrentNetworkNonceForAddress(contract.ownerAddress);            
+            this.reconcileNonceForAddress(contract.ownerAddress, networkNonce);           
         }
     }
 
@@ -66,7 +66,7 @@ class NonceService{
         let nonceSettings = this.getNonceSettingsFromLocalStorage(address);
         if(nonceSettings && nonceSettings.lastSent){
             nonceSettings.lastSent = lastSentNonce;
-            if(nonceSettings.nextAvailble <= lastSent){
+            if(nonceSettings.nextAvailble <= lastSentNonce){
                 nonceSettings.nextAvailble = lastSentNonce + 1;
             }
             this.saveNonceSettingsToLocalStorage(address, nonceSettings); 
@@ -89,9 +89,9 @@ class NonceService{
         this.localStorageService.addOrUpdateItemInStorage(address, nonce);
     }
 
-    getArrayOfContractAddresses(){
-        let addressArray = [this.localStorageSettings.registryContractAddress, this.localStorageSettings.mintableTokenContractAddress, this.localStorageSettings.iyPresaleContractAddress];
-        return addressArray;
+    getCurrentContracts(){
+        let currentContracts =  this.localStorageSettings.currentContractsSettings;
+        return currentContracts;
     }
 }
 

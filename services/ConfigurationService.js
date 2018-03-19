@@ -2,9 +2,9 @@ const contractConfigModel = require('../models/contractConfigModel');
 const ABI = require('../config/ABI.js');
 const rinkebyUrl = 'https://rinkeby.infura.io';
 const localHostUrl = 'http://127.0.0.1:8545';
-const registryContractAddress = "0xaa148d4490a4d6b83c7c26ad16f31dda21c3895a";
-const iyPresaleContractAddress = "0xd6d387590973f6da8e264d7ab519efaa7e1f5520";
-const mintableTokenContractAddress = "0x835c42aaf82e1c49367a4fa012a8f76c50f5caff";
+const registryContractAddress = "0xfba4ae7d29fdc97ede7fb8f47e7d303aa22a3f1f";
+const iyPresaleContractAddress = "0x704b8ffd334d7678901f8ce080899a004d17fa92";
+const mintableTokenContractAddress = "0xD7A456279a0AbC79AeB3d8D9f6a1F7C88eA7D3c0";
 
 
 class ConfigurationService {
@@ -20,13 +20,20 @@ class ConfigurationService {
   }
 
   getLocalStorageSettings(){
+    let contractsArray = this.getArrayOfCurrentContracts();
     return{
       iYieldTransactionsKey: 'iYieldTransactions',
       pendingIYieldTransactionsKey: 'pending-iYieldTransactions',
-      registryContractAddress: registryContractAddress, 
-      mintableTokenContractAddress: mintableTokenContractAddress,
-      iyPresaleContractAddress: iyPresaleContractAddress
+      currentContractsSettings: contractsArray
     };
+  }
+
+  getArrayOfCurrentContracts(){
+    let registryContract = this.getRegistryContractConfig();
+    let iyPresaleContract = this.getIyPresaleContractConfig();
+    let mintableTokenContract = this.getMintableTokenContractConfig();
+    let contractArray = [registryContract, iyPresaleContract, mintableTokenContract];
+    return contractArray;
   }
 
   getRegistryContractConfig() {
