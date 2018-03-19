@@ -27,12 +27,12 @@ registryRouter.get('/registry/:address', async function(req, res) {
     return res.json(responseModel);
 });
 
-//   // Create new. Originator and Beneficiary are different
-//   registryRouter.post('/registry/:originator/:beneficiary', async function(req, res){
-//     let regService = new RegistryService();
-//     let responseJson = await regService.addUser(req.params.originator, req.params.beneficiary);
-//     return res.json(responseJson);
-// });
+   // Create new. Originator and Beneficiary are different
+   registryRouter.post('/registry/:originator/:beneficiary', async function(req, res){
+     let regService = new RegistryService();
+     let responseJson = await regService.addUser(req.params.originator, req.params.beneficiary);
+     return res.json(responseJson);
+ });
 
 // // Remove entry
 // registryRouter.delete('/registry/:address', async function(req, res){
