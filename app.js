@@ -8,11 +8,6 @@ var errorModel = require('./models/errorModel');
 var registryRouter = require('./routes/registryRouter');
 var tokenRouter = require('./routes/tokenRouter');
 var transactionRouter = require('./routes/transactionRouter');
-<<<<<<< HEAD
-var EthService =  require('./services/EthService');
-
-
-=======
 const ConfigurationService = require('./services/ConfigurationService');
 
 // Watch for keyfile
@@ -30,7 +25,6 @@ watch('keydrop', { recursive: true }, function(evt, name) {
   });
 
 });
->>>>>>> master
 
 
 var app = express();
