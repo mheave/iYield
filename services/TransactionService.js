@@ -1,6 +1,6 @@
 const transactionModel = require('../models/blockchain/transactionModel');
 const LocalStorageService = require('./LocalStorageService');
-const ConfigurationService = require('./ConfigurationService');
+const EthService = require('./EthService');
 
 const _ = require('lodash');
 
@@ -10,22 +10,19 @@ const transactionMinedLabel = 'mined';
 class TransactionService
 {
     constructor(){
-        this.localStorageService = new LocalStorageService();
-        this.setLocalStorageKeys();
-    }
-
-    setLocalStorageKeys(){      
-        let configurationService = config;
-        this.localStorageSettings = configurationService.getLocalStorageSettings();
+        this.localStorageService = new LocalStorageService();       
+        this.pendingTransactionStorageKey = this.localStorageService.localStorageSettings.pendingIYieldTransactionsKey;
+        this.iYieldTransactionsKey = this.localStorageService.localStorageSettings.pendingIYieldTransactionsKey;        
     }
 
     addTransactionToPendingList(transaction){
         transaction.status = transactionPendingLabel;
-        this.localStorageService.addItemToList(this.localStorageSettings.pendingIYieldTransactionsKey, transaction);
+
+        this.localStorageService.addItemToList(this.pendingTransactionStorageKey, transaction);
     }        
 
-    getPendingTransactions(){
-        let pendingTransctions = this.localStorageService.getItemFromStorage(this.localStorageSettings.pendingIYieldTransactionsKey);
+    getPendingTransactions(){     
+        let pendingTransctions = this.localStorageService.getItemFromStorage(this.pendingTransactionStorageKey);
         if(pendingTransctions === undefined || pendingTransctions ===null || pendingTransctions.length === 0){
             return null;
         }        
@@ -41,6 +38,15 @@ class TransactionService
         return { status: transactionMinedLabel };
     }
 
+    async getTransactionStatusFromNetwork(txHash){
+        let ethService = new EthService();
+        let txStatus = await ethService.getTransactionStatusFromNetwork(txHash);
+        if(txStatus != null && txStatus.blockNumber){
+            return { status: "mined", blockNumber: txStatus.blockNumber.words[0]};
+        }
+        return {stauts: "unknown", blockNumber: null};
+    }
+
     indexPostitionOfTransactionInPendingList(txHash){
         let pendingTransactions = this.getPendingTransactions();
         if(pendingTransactions === null){
@@ -52,20 +58,23 @@ class TransactionService
     }
 
     setPendingTransactionsToCompleted(currentPendingTransactions, transactionHashesToUpdate){
-        let updatedTransactions = 0;
+        let updatedTransactions = 0;      
         for (var i = 0, len = currentPendingTransactions.length; i < len; i++) {
             let pendingTransaction = currentPendingTransactions[i];
+            if(!pendingTransaction || pendingTransaction.transactionHash){
+                continue;
+            }
             let matchingTransactionIndex = _.findIndex(transactionHashesToUpdate, (hash) => { return hash === pendingTransaction.transactionHash});
             if(matchingTransactionIndex > -1){
                 pendingTransaction.status = transactionMinedLabel;              
-                this.localStorageService.addItemToList(this.localStorageSettings.iYieldTransactionsKey, pendingTransaction);
+                this.localStorageService.addItemToList(this.iYieldTransactionsKey, pendingTransaction);
                 _.pullAt(currentPendingTransactions, i);
                 _.pullAt(transactionHashesToUpdate, matchingTransactionIndex);  
                 updatedTransactions++;
             }
         }
         if(updatedTransactions > 0){
-            this.localStorageService.refreshStore(this.localStorageSettings.pendingIYieldTransactionsKey, currentPendingTransactions)
+            this.localStorageService.refreshStore(this.pendingTransactionStorageKey, currentPendingTransactions)
         }
     }
 

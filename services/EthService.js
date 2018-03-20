@@ -18,27 +18,29 @@ class EthService{
         return contract;
     }
 
-    async sendSignedTransaction(contractConfigModel, data, value, gasCost, gasPrice){
-        let nonce = await this.getCurrentNonceForAccount(contractConfigModel.ownerAddress);
+    async getTransactionStatusFromNetwork(txHash){
+        let txStatus = await this.eth.getTransactionByHash(txHash);
+        return txStatus;
+    }
 
+    async sendSignedTransaction(contractModel, data, value, gasCost, gasPrice){
+        let nonce = await this.getCurrentNonceForAccount(contractModel.ownerAddress);
         let signedTransaction = sign({
-            to: contractConfigModel.contractAddress,
+            to: contractModel.contractAddress,
             value: value,
             gas: new BN(gasCost),
             gasPrice: new BN(gasPrice),
             nonce: nonce,
             data: data
-          }, contractConfigModel.ownerPrivateKey);
+          }, contractModel.ownerPrivateKey);
         
-
         let transaction = await this.eth.sendRawTransaction(signedTransaction).catch((err) => {return err;});
         let txResult = transactionResult(transaction);
-
         return txResult;
     }
 
     async getCurrentNonceForAccount(account){
-        let nonce = await this.eth.getTransactionCount(account);
+        let nonce = await this.eth.getTransactionCount(account, 'pending');
         return nonce;
     }
 

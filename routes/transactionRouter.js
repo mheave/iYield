@@ -11,4 +11,11 @@ transactionRouter.get('/transaction/:txHash', async function(req, res){
     return res.json(responseModel);    
 });
 
+transactionRouter.get('/transaction/network/:txHash', async function(req, res){
+    let transactionService = new TransactionService();
+    let txStatus = await transactionService.getTransactionStatusFromNetwork(req.params.txHash);
+    let responseModel = apiResponseModel(txStatus);
+    return res.json(responseModel);
+});
+
 module.exports = transactionRouter;

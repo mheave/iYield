@@ -9,7 +9,14 @@ registryRouter.get('/registry', async function(req, res) {
     let getUsersResponse = await regService.getUsers(req.params.address);
     let responseModel = apiResponseModel(getUsersResponse);
     return res.json(responseModel);
-  });
+});
+
+registryRouter.get('/registry/allbeneficiaries', async function(req, res){
+  let regService = new RegistryService();
+  let getBeneficiariesResponse = await regService.getAllBeneficiaries();
+  let responseModel = apiResponseModel(getBeneficiariesResponse);
+  return res.json(responseModel);
+});
 
 // Get entry for specific user
 registryRouter.get('/registry/:address', async function(req, res) {
@@ -17,14 +24,15 @@ registryRouter.get('/registry/:address', async function(req, res) {
     let getUserResponse = await regService.getUser(req.params.address);
     let responseModel = apiResponseModel(getUserResponse);
     return res.json(responseModel);
-  });
+});
 
-  // Create new. Originator and Beneficiary are same
-  registryRouter.post('/registry/:address', async function(req, res){
-    let regService = new RegistryService();
-    let addUserResponse = await regService.addUser(req.params.address, req.params.address);
-    let responseModel = apiResponseModel(addUserResponse);
-    return res.json(responseModel);
+
+// Create new. Originator and Beneficiary are same
+registryRouter.post('/registry/:address', async function(req, res){
+  let regService = new RegistryService();
+  let addUserResponse = await regService.addUser(req.params.address, req.params.address);
+  let responseModel = apiResponseModel(addUserResponse);
+  return res.json(responseModel);
 });
 
    // Create new. Originator and Beneficiary are different
@@ -34,18 +42,7 @@ registryRouter.get('/registry/:address', async function(req, res) {
      return res.json(responseJson);
  });
 
-// // Remove entry
-// registryRouter.delete('/registry/:address', async function(req, res){
-//     let regService = new RegistryService();
-//     let responseJson = await regService.deleteUser(req.params.address);
-//     return res.json(responseJson);
-// });
 
-// // Update beneficiary
-// registryRouter.patch('/registry/:originator/:newBeneficiary', async function(req, res){
-//     let regService = new RegistryService();
-//     let responseJson = await regService.updateUser(req.params.originator, req.params.newBeneficiary);
-//     return res.json(responseJson);
-// });
+
 
 module.exports = registryRouter;

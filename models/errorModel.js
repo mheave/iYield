@@ -1,8 +1,9 @@
-function errorModel(method, errMsg, params){
+function errorModel(method, params, errMsg, stackTrace){
     return {
         method: method,
+        params: params,
         errMsg: errMsg,
-        params: params
+        stackTrace: stackTrace
     };
 }
 

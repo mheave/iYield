@@ -23,7 +23,7 @@ class BlockChainMonitorService
         this.analyseAndRecordBlockData(block);
         await this.sleep();
         this.blockChecker();
-    }
+    }    
 
     analyseAndRecordBlockData(block){       
         let blockModel = this.blockAnalysisService.analyseAndProcessBlock(block);
