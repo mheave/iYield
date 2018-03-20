@@ -8,7 +8,6 @@ var app = require('../app');
 var debug = require('debug')('iyield-api:server');
 var http = require('http');
 const BlockChainMonitorService = require('../services/BlockChainMonitorService');
-const NonceService = require('../services/NonceService');
 
 
 /**

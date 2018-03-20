@@ -1,5 +1,6 @@
 const transactionModel = require('../models/blockchain/transactionModel');
 const LocalStorageService = require('./LocalStorageService');
+const EthService = require('./EthService');
 
 const _ = require('lodash');
 
@@ -9,7 +10,7 @@ const transactionMinedLabel = 'mined';
 class TransactionService
 {
     constructor(){
-        this.localStorageService = new LocalStorageService();
+        this.localStorageService = new LocalStorageService();       
         this.pendingTransactionStorageKey = this.localStorageService.localStorageSettings.pendingIYieldTransactionsKey;
         this.iYieldTransactionsKey = this.localStorageService.localStorageSettings.pendingIYieldTransactionsKey;        
     }
@@ -37,6 +38,15 @@ class TransactionService
         return { status: transactionMinedLabel };
     }
 
+    async getTransactionStatusFromNetwork(txHash){
+        let ethService = new EthService();
+        let txStatus = await ethService.getTransactionStatusFromNetwork(txHash);
+        if(txStatus != null && txStatus.blockNumber){
+            return { status: "mined", blockNumber: txStatus.blockNumber.words[0]};
+        }
+        return {stauts: "unknown", blockNumber: null};
+    }
+
     indexPostitionOfTransactionInPendingList(txHash){
         let pendingTransactions = this.getPendingTransactions();
         if(pendingTransactions === null){
@@ -51,6 +61,9 @@ class TransactionService
         let updatedTransactions = 0;      
         for (var i = 0, len = currentPendingTransactions.length; i < len; i++) {
             let pendingTransaction = currentPendingTransactions[i];
+            if(!pendingTransaction || pendingTransaction.transactionHash){
+                continue;
+            }
             let matchingTransactionIndex = _.findIndex(transactionHashesToUpdate, (hash) => { return hash === pendingTransaction.transactionHash});
             if(matchingTransactionIndex > -1){
                 pendingTransaction.status = transactionMinedLabel;              

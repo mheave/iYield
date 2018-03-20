@@ -9,8 +9,6 @@ var registryRouter = require('./routes/registryRouter');
 var tokenRouter = require('./routes/tokenRouter');
 var transactionRouter = require('./routes/transactionRouter');
 var EthService =  require('./services/EthService');
-var NonceService = require('./services/NonceService');
-
 
 
 
@@ -49,8 +47,8 @@ app.use(function(err, req, res, next) {
 });
 
 process.on('unhandledRejection', error => {
-  // Will print "unhandledRejection err is not defined"
   console.log('unhandledRejection', error.message);
+  console.log('unhandledRejection', error);
 });
 
 

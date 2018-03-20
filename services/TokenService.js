@@ -1,7 +1,6 @@
 const ConfigurationService = require('./ConfigurationService');
 const EthService = require('./EthService');
 const TransactionService = require('./TransactionService');
-const NonceService = require('./NonceService');
 const RegistryService = require('./RegistryService');
 const iYieldTransactionModel = require('../models/blockchain/iYieldTransactionModel');
 const unit = require('ethjs-unit');
@@ -14,7 +13,6 @@ const gasPrice = 20000000000;
 class TokenService {
     constructor(){  
         this.transactionService = new TransactionService();   
-        this.nonceService = new NonceService();     
         let configurationService = new ConfigurationService();
         this.ethService = new EthService();             
         this.contractConfigModel = configurationService.getIyPresaleContractConfig();
@@ -26,7 +24,7 @@ class TokenService {
         try{
             let tokenAmountInWei = unit.toWei(tokenAmount, 'ether');
             let data = this.ethService.createTransctionDataObject('currencyTokenPurchase', [beneficiary, currency, currencyAmount, tokenAmountInWei], this.contractConfigModel.abi)
-            let txResult = await this.sendTokenServiceTransaction(data, buyTokensGasCost, gasPrice);   
+            let txResult = await this.ethService.sendSignedTransaction(this.contractConfigModel, data, 0, buyTokensGasCost, gasPrice); 
             if(!txResult.success){
                 throw txResult.error;
             }
@@ -35,7 +33,7 @@ class TokenService {
             return iYieldTransaction;            
         }
         catch(error){
-            return errorModel("TokenService.currencyTokenPurchase", error, {beneficiary: beneficiary, currency: currency, currencyAmount: currencyAmount, tokenAmount: tokenAmount });
+            return errorModel("TokenService.currencyTokenPurchase", {beneficiary: beneficiary, currency: currency, currencyAmount: currencyAmount, tokenAmount: tokenAmount }, error.message, error.stack);
         }
     }
 
@@ -63,22 +61,13 @@ class TokenService {
             var beneficiaryAddress = beneficiaries[b];
             console.log("Migrate account: " + beneficiaryAddress);
             let data = this.ethService.createTransctionDataObject('migrateAccount', [beneficiaryAddress], this.contractConfigModel.abi)
-            let txResult = await this.sendTokenServiceTransaction(data, buyTokensGasCost*2, gasPrice);   
+            let txResult = await this.ethService.sendSignedTransaction(this.contractConfigModel, data, 0, buyTokensGasCost, gasPrice); 
             migrationResult.push({ beneficiary: beneficiaryAddress, txResult: txResult});
             console.log(txResult);
         }
 
         return { report: migrationResult, accountsProcessed: 88, totalTokensMinted: 500};
     }
-
-
-    async sendTokenServiceTransaction(data, gasCost, gasPrice){
-        let txNonce = this.nonceService.getNextAvailableNonceForAddress(this.contractConfigModel.ownerAddress);
-        this.nonceService.setLastSentTransactionNonceForAddress(this.contractConfigModel.ownerAddress, txNonce);
-        let txResult =  await this.ethService.sendSignedTransaction(txNonce, this.contractConfigModel, data, 0, gasCost, gasPrice);   
-        return txResult;
-    }
-
 
 }
 
