@@ -11,8 +11,6 @@ class BlockAnalysisService
     }    
 
     analyseAndProcessBlock(block){
-        console.log("analysing block...");
-
         let blockModel = this.generateBlockModelFromBlock(block);
         if(blockModel != null){
             let updatedTransactions = this.transactionService.updatePendingTransactionsFromTransactionsInBlockAndReturnUpdatedCount(blockModel);

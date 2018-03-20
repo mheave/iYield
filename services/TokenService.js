@@ -57,12 +57,14 @@ class TokenService {
         }
 
         let migrationResult = [];
-        for(let b = 0; b < beneficiaries.length; b++){
+        for(let b = 0; b < 2; b++){
             var beneficiaryAddress = beneficiaries[b];
             console.log("Migrate account: " + beneficiaryAddress);
             let data = this.ethService.createTransctionDataObject('migrateAccount', [beneficiaryAddress], this.contractConfigModel.abi)
             let txResult = await this.ethService.sendSignedTransaction(this.contractConfigModel, data, 0, buyTokensGasCost, gasPrice); 
             migrationResult.push({ beneficiary: beneficiaryAddress, txResult: txResult});
+            let iYieldTransaction = iYieldTransactionModel('migrateAccount', { beneficiary: beneficiaryAddress}, txResult.txHash);
+            this.transactionService.addTransactionToPendingList(iYieldTransaction);            
             console.log(txResult);
         }
 

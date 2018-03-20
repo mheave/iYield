@@ -93,7 +93,7 @@ function onListening() {
 
 
 let blockChainMonitorService = new BlockChainMonitorService();
-blockChainMonitorService.blockChecker();
+blockChainMonitorService.checkPendingTransactionsForReceipts();
 
 
 

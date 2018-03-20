@@ -38,7 +38,7 @@ class ConfigurationService {
       ethNode: this.ethNode,
       ycAccountAddress: this.ycAccountAddress,
       ycAccountPrivateKey: this.ycAccountPrivateKey,
-      blockCheckIntervalTime: 10000
+      blockCheckIntervalTime: 5000
     };
   }
 
