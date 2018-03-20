@@ -26,6 +26,7 @@ registryRouter.get('/registry/:address', async function(req, res) {
     return res.json(responseModel);
 });
 
+
 // Create new. Originator and Beneficiary are same
 registryRouter.post('/registry/:address', async function(req, res){
   let regService = new RegistryService();
@@ -33,6 +34,14 @@ registryRouter.post('/registry/:address', async function(req, res){
   let responseModel = apiResponseModel(addUserResponse);
   return res.json(responseModel);
 });
+
+   // Create new. Originator and Beneficiary are different
+   registryRouter.post('/registry/:originator/:beneficiary', async function(req, res){
+     let regService = new RegistryService();
+     let responseJson = await regService.addUser(req.params.originator, req.params.beneficiary);
+     return res.json(responseJson);
+ });
+
 
 
 

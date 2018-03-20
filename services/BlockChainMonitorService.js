@@ -12,7 +12,7 @@ class BlockChainMonitorService
     }    
 
     setBlockchainIntervalTime(){
-        let configurationService = new ConfigurationService();
+        let configurationService = config;
         let globalSettings = configurationService.getGlobalSettings();
         this.blockCheckIntervalTime = globalSettings.blockCheckIntervalTime;    
     }

@@ -8,13 +8,36 @@ const mintableTokenContractAddress = "0xD7A456279a0AbC79AeB3d8D9f6a1F7C88eA7D3c0
 
 
 class ConfigurationService {
-  constructor(){};
+
+  constructor(){
+
+    this.ethNode = rinkebyUrl;
+    this.ycAccountAddress = '0x1313734d2D6625173278978DDaa7B63400462745';
+    this.ycAccountPrivateKey = '0x673a54beee87f667d9204d314433b04e49011d1a4caa74bf166830d6d7570515';
+
+  };
+
+  setGlobalSettings(params) {
+
+    /*if (params.ethNode) {
+      this.ethNode = params.ethNode;
+    }
+
+    if (params.ycAccountAddress) {
+      this.ycAccountAddress = params.ycAccountAddress;
+    }*/
+
+    if (params.ycAccountPrivateKey) {
+      this.ycAccountPrivateKey = params.ycAccountPrivateKey;
+    }
+
+  }
 
   getGlobalSettings(){
     return {
-      ethNode: rinkebyUrl,
-      ycAccountAddress: '0x1313734d2D6625173278978DDaa7B63400462745',
-      ycAccountPrivateKey: '0x673a54beee87f667d9204d314433b04e49011d1a4caa74bf166830d6d7570515',
+      ethNode: this.ethNode,
+      ycAccountAddress: this.ycAccountAddress,
+      ycAccountPrivateKey: this.ycAccountPrivateKey,
       blockCheckIntervalTime: 10000
     };
   }
