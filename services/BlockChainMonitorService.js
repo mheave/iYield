@@ -3,6 +3,7 @@ const BlockAnalysisService = require('./BlockAnalysisService');
 const LocalStorageService = require('./LocalStorageService');
 const ConfigurationService = require('./ConfigurationService');
 const TransactionService = require('./TransactionService');
+const extractContractEvents = require('@digicat/ethereum-extract-contract-events')
 
 class BlockChainMonitorService
 {
@@ -10,6 +11,7 @@ class BlockChainMonitorService
         this.blockAnalysisService = new BlockAnalysisService();
         this.localStorageService = new LocalStorageService();
         this.transactionService = new TransactionService();
+        this.configurationService = new ConfigurationService();
         this.setBlockchainIntervalTime();
     }    
 
@@ -41,6 +43,14 @@ class BlockChainMonitorService
 
     async analyseAndProcessTransactionReceipt(txReceipt){
         if(txReceipt){
+            let contractConfig = this.configurationService.getIyPresaleContractConfig();
+
+            let events = extractContractEvents({
+                contractAbi: contractConfig.abi,
+                contractAddress: contractConfig.contractAddress,
+                logs: txReceipt.logs
+              })            
+
             this.transactionService.setPendingTransactionToComplete(txReceipt)        
         }
     }

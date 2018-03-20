@@ -17,8 +17,20 @@ class TokenService {
         this.ethService = new EthService();             
         this.contractConfigModel = configurationService.getIyPresaleContractConfig();
         this.mintableContractConfig = configurationService.getMintableTokenContractConfig();
+        this.ycContractConfig = configurationService.getYCTokenContractConfig();
     }
 
+    async getYcBalnce(address){
+        try{
+            let iyPresaleContract = await this.ethService.getContractFromConfig(this.ycContractConfig);
+            let balanceResult = await iyPresaleContract.balanceOf(address);
+            let balance = unit.fromWei(balanceResult.balance.toString(10), 'ether');
+            return { balance: balance };
+        }
+        catch(error){
+            return errorModel("TokenService.getYcBalnce",{address: address}, error.message, error.stack);
+        }
+    }
    
     async currencyTokenPurchase(beneficiary, currency, currencyAmount, tokenAmount){
         try{

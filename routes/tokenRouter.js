@@ -18,6 +18,12 @@ tokenRouter.post('/tokens/purchase/:beneficiary/:currency/:currencyAmount/:token
 //     return res.json(responseJson);
 // });
 
+tokenRouter.get('/tokens/balance/yieldcoin/:address', async function(req, res){
+    let tokenService = new TokenService();
+    let responseJson = await tokenService.getYcBalnce(req.params.address);
+    return res.json(responseJson);
+});
+
 tokenRouter.get('/tokens/balance/:address', async function(req, res){
     let tokenService = new TokenService();
     let tokenBalanceResponse = await tokenService.getTokenBalanceForAddress(req.params.address);
@@ -31,6 +37,7 @@ tokenRouter.post('/tokens/migrate', async function(req, res){
     let responseModel = apiResponseModel(migratedTokens);
     return res.json(responseModel);
 })
+
 
 
 module.exports = tokenRouter;
