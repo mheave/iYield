@@ -6,6 +6,7 @@
     "start": "node ./bin/www"
   },
   "dependencies": {
+    "@digicat/ethereum-extract-contract-events": "^1.0.0",
     "bn.js": "^4.11.8",
     "body-parser": "~1.18.2",
     "cookie-parser": "~1.4.3",

@@ -1,14 +1,16 @@
 const Eth = require('ethjs');
 const ethAbi = require('ethjs-abi');
-const sign = require('ethjs-signer').sign
-const ConfigurationService = require('./ConfigurationService');
-const transactionResult = require('../models/blockchain/transactionResult');
+const sign = require('ethjs-signer').sign;
 const BN = require('bn.js');
 const _ = require('lodash');
 
+const ConfigurationService = require('./ConfigurationService');
+
+const TransactionResult = require('../models/blockchain/TransactionResult');
+
 class EthService{
     constructor(){
-        let configurationService = config;
+        let configurationService = new ConfigurationService();
         let globalConfig = configurationService.getGlobalSettings();        
         this.eth = new Eth(new Eth.HttpProvider(globalConfig.ethNode));        
     }
@@ -35,7 +37,7 @@ class EthService{
           }, contractModel.ownerPrivateKey);
         
         let transaction = await this.eth.sendRawTransaction(signedTransaction).catch((err) => {return err;});
-        let txResult = transactionResult(transaction);
+        let txResult = TransactionResult(transaction);
         return txResult;
     }
 

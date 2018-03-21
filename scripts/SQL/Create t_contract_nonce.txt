@@ -1,8 +1,0 @@
-CREATE TABLE `yieldcoinapi`.`t_contract_nonce` (
-  `idt_contract_nonce` INT NOT NULL,
-  `contract_id` VARCHAR(45) NULL,
-  `current_nonce_value` INT NULL,
-  `current_last_updated` DATETIME NULL,
-  `allocated_nonce_value` INT NULL,
-  `allocated_last_updated` DATETIME NULL,
-  PRIMARY KEY (`idt_contract_nonce`));
