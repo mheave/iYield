@@ -29,7 +29,6 @@ watch('keydrop', { recursive: true }, function(evt, name) {
 
 var app = express();
 app.use(logger('dev'));
-//app.use(securityCheck("cwc"));
 app.use( bodyParser.json() );       
 app.use(bodyParser.urlencoded({ 
   extended: true
