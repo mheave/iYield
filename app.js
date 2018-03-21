@@ -6,6 +6,7 @@ var securityCheck = require('./middleware/security')
 var errorModel = require('./models/errorModel');
 
 var registryRouter = require('./routes/registryRouter');
+var contractRouter = require('./routes/contractRouter');
 var tokenRouter = require('./routes/tokenRouter');
 var transactionRouter = require('./routes/transactionRouter');
 
@@ -36,6 +37,7 @@ app.use(bodyParser.urlencoded({
 
 
 // Routing
+app.use('/', contractRouter);
 app.use('/', registryRouter);
 app.use('/', tokenRouter);
 app.use('/', transactionRouter);

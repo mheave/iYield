@@ -20,51 +20,36 @@ class TransactionService
     
     setPendingTransactionToComplete(spentTransaction){
         let txHash = spentTransaction.txReceipt.transactionHash;
-        let pendingTransactionsList = this.getPendingTransactions();
-        let txIndex = _.findIndex(pendingTransactionsList, {transactionHash: txHash});
-        _.pullAt(pendingTransactionsList, txIndex);
-
-        this.localStorageService.refreshStore(this.pendingTransactionStorageKey, pendingTransactionsList);
+        this.localStorageService.removeTransactionFromPendingList(txHash);
         this.localStorageService.addItemToSpentTransactionList(spentTransaction);
     }    
 
-    getPendingTransactions(){     
-        let pendingTransctions = this.localStorageService.getItemFromStorage(this.pendingTransactionStorageKey);
-        if(pendingTransctions === undefined || pendingTransctions ===null || pendingTransctions.length === 0){
-            return null;
-        }        
-        return pendingTransctions;
-    }
 
-    getTransactionStatus(transactionHash){
-
-        // to be updated
-        let pendingTransactionPosition = this.indexPostitionOfTransactionInPendingList(transactionHash);
-        if(pendingTransactionPosition>-1){
-            return {status: transactionPendingLabel };
+    getTransactionStatus(txHash){
+        let pendingTransactionEntry = this.localStorageService.getTransactionFromPendingList(txHash);
+        if(pendingTransactionEntry){
+            return { status: transactionPendingLabel, tx: pendingTransactionEntry }
         }
 
-        return { status: transactionMinedLabel };
+        let spentTransactionEntry = this.localStorageService.getTransactionFromSpentList(txHash);
+        if(spentTransactionEntry){
+            return {status: transactionMinedLabel, tx: spentTransactionEntry };
+        }       
+
+        return { status: "unknown TX", tx: null };
     }
 
     async getTransactionStatusFromNetwork(txHash){
+        
         let ethService = new EthService();
-        let txStatus = await ethService.getTransactionStatusFromNetwork(txHash);
-        if(txStatus != null && txStatus.blockNumber){
-            return { status: "mined", blockNumber: txStatus.blockNumber.words[0]};
+        let txReceipt = await ethService.getTransactionReceiptFromNetwork(txHash);
+        if(txReceipt != null){
+            return { status: "mined", txReceipt: txReceipt};
         }
-        return {stauts: "unknown", blockNumber: null};
+        return {status: "pending", txReceipt: null};
     }
 
-    indexPostitionOfTransactionInPendingList(txHash){
-        let pendingTransactions = this.getPendingTransactions();
-        if(pendingTransactions === null){
-            return -1;
-        }   
 
-        let txHashPosition = _.findIndex(pendingTransactions, {transactionHash: txHash});
-        return txHashPosition;
-    }
 
 }
 

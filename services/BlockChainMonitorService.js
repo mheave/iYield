@@ -24,7 +24,7 @@ class BlockChainMonitorService
     }
 
     async checkPendingTransactionsForReceipts(){
-        let pendingTransactions = this.transactionService.getPendingTransactions();
+        let pendingTransactions = this.localStorageService.getPendingTransactions();
         if(!pendingTransactions || pendingTransactions.length < 1){
             await this.sleep();
             this.checkPendingTransactionsForReceipts();  

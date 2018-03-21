@@ -31,6 +31,6 @@ tokenRouter.post('/tokens/migrate', async function(req, res){
     let migratedTokens = await tokenService.migrateTokens();
     let responseModel = apiResponseModel(migratedTokens);
     return res.json(responseModel);
-})
+});
 
 module.exports = tokenRouter;

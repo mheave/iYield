@@ -25,6 +25,11 @@ class EthService{
         return txStatus;
     }
 
+    async getTransactionReceiptFromNetwork(txHash){
+        let txReceipt = await this.eth.getTransactionReceipt(txHash);
+        return txReceipt;
+    }
+
     async sendSignedTransaction(contractModel, data, value, gasCost, gasPrice){
         let nonce = await this.getCurrentNonceForAccount(contractModel.ownerAddress);
         let signedTransaction = sign({
