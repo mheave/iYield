@@ -5,6 +5,11 @@ const TransactionService = require('../services/TransactionService');
 
 const apiResponseModel = require('../models/ApiResponseModel');
 
+/*
+    TO DO
+    ~~~~~
+    * Transaction query endpoint and models
+*/
 
 transactionRouter.get('/transaction/:txHash', async function(req, res){
     let transactionService = new TransactionService();
@@ -13,6 +18,7 @@ transactionRouter.get('/transaction/:txHash', async function(req, res){
     return res.json(responseModel);    
 });
 
+// Gets the current status of the transaction live from the network. If mined, returns txReceipt
 transactionRouter.get('/transaction/network/:txHash', async function(req, res){
     let transactionService = new TransactionService();
     let txStatus = await transactionService.getTransactionStatusFromNetwork(req.params.txHash);

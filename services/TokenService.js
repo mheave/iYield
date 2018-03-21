@@ -1,4 +1,6 @@
 const unit = require('ethjs-unit');
+const BN = require('bn.js');
+
 
 const ConfigurationService = require('./ConfigurationService');
 const EthService = require('./EthService');
@@ -39,6 +41,18 @@ class TokenService {
         }
     }
 
+    async getCurrentRaisedAmount(){
+        try{
+            let iyPresaleContract = await this.ethService.getContractFromConfig(this.ycContractConfig);
+            let totalRaisedInWei = await iyPresaleContract.totalSupply();
+            let totalRaised = unit.fromWei(totalRaisedInWei[0].toString(10), 'ether');
+            return  { currentContractFrtTotal : totalRaised }
+        }
+        catch(error){
+            return errorModel("TokenService.getCurrentRaisedAmount", null, error.message, error.stack);
+        }
+    }
+
     async getTokenBalanceForAddress(address){
         try{
             let mintableContract = await this.ethService.getContractFromConfig(this.mintableContractConfig);
@@ -47,7 +61,7 @@ class TokenService {
             return { balance: balance };
         }
         catch(error){
-            return errorModel("TokenService.getTokenBalanceForAddress", error, {address: address});
+            return errorModel("TokenService.getTokenBalanceForAddress", {address: address}, error.message, error.stack);
         }
     }
 
@@ -64,23 +78,29 @@ class TokenService {
     }    
 
     async migrateTokens(){
-        let registryService = new RegistryService();
-        let beneficiaries = await registryService.getAllBeneficiaries();
-        if(beneficiaries.length === 0){
-            return;
-        }
+        try{
+            let registryService = new RegistryService();
+            let beneficiaries = await registryService.getAllBeneficiaries();
+            if(beneficiaries.length === 0){
+                return;
+            }
+    
+            let migrationResult = [];
+            for(let b = 0; b < beneficiaries.length; b++){
+                var beneficiaryAddress = beneficiaries[b];
+                let data = this.ethService.createTransctionDataObject('migrateAccount', [beneficiaryAddress], this.contractConfigModel.abi)
+                let txResult = await this.ethService.sendSignedTransaction(this.contractConfigModel, data, 0, buyTokensGasCost, gasPrice); 
+                
+                migrationResult.push({ beneficiary: beneficiaryAddress, txResult: txResult});
+                let pendingTransaction = pendingTransactionModel('TokenService.migrateAccount', { beneficiary: beneficiaryAddress}, txResult.txHash);
+                this.transactionService.addTransactionToPendingList(pendingTransaction);            
+            }
+            return { totalAccountsMigrated: migrationResult.length, report: migrationResult};
 
-        let migrationResult = [];
-        for(let b = 0; b < beneficiaries.length; b++){
-            var beneficiaryAddress = beneficiaries[b];
-            let data = this.ethService.createTransctionDataObject('migrateAccount', [beneficiaryAddress], this.contractConfigModel.abi)
-            let txResult = await this.ethService.sendSignedTransaction(this.contractConfigModel, data, 0, buyTokensGasCost, gasPrice); 
-            
-            migrationResult.push({ beneficiary: beneficiaryAddress, txResult: txResult});
-            let pendingTransaction = pendingTransactionModel('TokenService.migrateAccount', { beneficiary: beneficiaryAddress}, txResult.txHash);
-            this.transactionService.addTransactionToPendingList(pendingTransaction);            
         }
-        return { totalAccountsMigrated: migrationResult.length, report: migrationResult};
+        catch(error){
+            return errorModel("TokenService.migrateTokens",null, error.message, error.stack);
+        }
     }
 }
 

@@ -2,15 +2,25 @@ const express = require('express');
 let registryRouter = express.Router();
 
 const RegistryService = require('../services/RegistryService');
+const ContractService = require('../services/ContractService');
 
 const apiResponseModel = require('../models/ApiResponseModel');
 
+// Get a llist of all the participants of the contract
 registryRouter.get('/registry/allbeneficiaries', async function(req, res){
   let regService = new RegistryService();
   let getBeneficiariesResponse = await regService.getAllBeneficiaries();
   let responseModel = apiResponseModel(getBeneficiariesResponse);
   return res.json(responseModel);
 });
+
+// Pause or Unpause contract
+registryRouter.post('/registry/paused/:pausestate', async function(req, res){
+  let contractService = new ContractService();
+  let setPausedStateResponse = await contractService.setPausedState(req.params.pausestate);
+  let responseModel = apiResponseModel(setPausedStateResponse);  
+  return res.json(responseModel);
+ });
 
 // Get entry for specific user
 registryRouter.get('/registry/:address', async function(req, res) {
@@ -19,7 +29,6 @@ registryRouter.get('/registry/:address', async function(req, res) {
   let responseModel = apiResponseModel(getUserResponse);
   return res.json(responseModel);
 });
-
 
 // Create new. Originator and Beneficiary are same
 registryRouter.post('/registry/:address', async function(req, res){
@@ -33,10 +42,8 @@ registryRouter.post('/registry/:address', async function(req, res){
 registryRouter.post('/registry/:originator/:beneficiary', async function(req, res){
   let regService = new RegistryService();
   let responseJson = await regService.addUser(req.params.originator, req.params.beneficiary);
-  return res.json(responseJson);
+  let responseModel = apiResponseModel(responseJson);  
+  return res.json(responseModel);
  });
-
-
-
 
 module.exports = registryRouter;
