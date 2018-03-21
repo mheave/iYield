@@ -1,8 +1,8 @@
-const transactionModel = require('../models/blockchain/transactionModel');
+const _ = require('lodash');
+
 const LocalStorageService = require('./LocalStorageService');
 const EthService = require('./EthService');
 
-const _ = require('lodash');
 
 const transactionPendingLabel = 'pending';
 const transactionMinedLabel = 'mined';
@@ -11,14 +11,22 @@ class TransactionService
 {
     constructor(){
         this.localStorageService = new LocalStorageService();       
-        this.pendingTransactionStorageKey = this.localStorageService.localStorageSettings.pendingIYieldTransactionsKey;
-        this.iYieldTransactionsKey = this.localStorageService.localStorageSettings.iYieldTransactionsKey;        
+        this.pendingTransactionStorageKey = this.localStorageService.localStorageSettings.pendingTransactionsKey;
     }
 
     addTransactionToPendingList(transaction){
-        transaction.status = transactionPendingLabel;
-        this.localStorageService.addItemToList(this.pendingTransactionStorageKey, transaction);
-    }        
+        this.localStorageService.addTransactionToPendingList(transaction);
+    }       
+    
+    setPendingTransactionToComplete(spentTransaction){
+        let txHash = spentTransaction.txReceipt.transactionHash;
+        let pendingTransactionsList = this.getPendingTransactions();
+        let txIndex = _.findIndex(pendingTransactionsList, {transactionHash: txHash});
+        _.pullAt(pendingTransactionsList, txIndex);
+
+        this.localStorageService.refreshStore(this.pendingTransactionStorageKey, pendingTransactionsList);
+        this.localStorageService.addItemToSpentTransactionList(spentTransaction);
+    }    
 
     getPendingTransactions(){     
         let pendingTransctions = this.localStorageService.getItemFromStorage(this.pendingTransactionStorageKey);
@@ -29,6 +37,8 @@ class TransactionService
     }
 
     getTransactionStatus(transactionHash){
+
+        // to be updated
         let pendingTransactionPosition = this.indexPostitionOfTransactionInPendingList(transactionHash);
         if(pendingTransactionPosition>-1){
             return {status: transactionPendingLabel };
@@ -55,16 +65,6 @@ class TransactionService
         let txHashPosition = _.findIndex(pendingTransactions, {transactionHash: txHash});
         return txHashPosition;
     }
-
-    async setPendingTransactionToComplete(txReceipt){
-        let txHash = txReceipt.transactionHash;
-        let pendingTransactionsList = this.getPendingTransactions();
-        let txIndex = _.findIndex(pendingTransactionsList, {transactionHash: txHash});
-        _.pullAt(pendingTransactionsList, txIndex);
-        this.localStorageService.refreshStore(this.pendingTransactionStorageKey, pendingTransactionsList);
-        this.localStorageService.addItemToList(this.iYieldTransactionsKey, txReceipt);
-    }
-
 
 }
 

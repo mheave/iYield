@@ -1,8 +1,9 @@
 const express = require('express');
 let tokenRouter = express.Router();
-const TokenService = require('../services/TokenService');
-const apiResponseModel = require('../models/apiResponseModel');
 
+const TokenService = require('../services/TokenService');
+
+const apiResponseModel = require('../models/ApiResponseModel');
 
 
 tokenRouter.post('/tokens/purchase/:beneficiary/:currency/:currencyAmount/:tokenAmount', async function(req, res){
@@ -12,15 +13,9 @@ tokenRouter.post('/tokens/purchase/:beneficiary/:currency/:currencyAmount/:token
     return res.json(responseModel);
 });
 
-// tokenRouter.get('/tokens', async function(req, res){
-//     let tokenService = new TokenService();
-//     let responseJson = await tokenService.adminPermittedToPurchase();
-//     return res.json(responseJson);
-// });
-
 tokenRouter.get('/tokens/balance/yieldcoin/:address', async function(req, res){
     let tokenService = new TokenService();
-    let responseJson = await tokenService.getYcBalnce(req.params.address);
+    let responseJson = await tokenService.getYcBalanceForAddress(req.params.address);
     return res.json(responseJson);
 });
 
@@ -37,7 +32,5 @@ tokenRouter.post('/tokens/migrate', async function(req, res){
     let responseModel = apiResponseModel(migratedTokens);
     return res.json(responseModel);
 })
-
-
 
 module.exports = tokenRouter;

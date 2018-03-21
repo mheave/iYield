@@ -8,7 +8,6 @@ var errorModel = require('./models/errorModel');
 var registryRouter = require('./routes/registryRouter');
 var tokenRouter = require('./routes/tokenRouter');
 var transactionRouter = require('./routes/transactionRouter');
-const ConfigurationService = require('./services/ConfigurationService');
 
 // Watch for keyfile
 var watch = require('node-watch');
@@ -35,7 +34,6 @@ app.use(bodyParser.urlencoded({
   extended: true
 }));
 
-config = new ConfigurationService();
 
 // Routing
 app.use('/', registryRouter);

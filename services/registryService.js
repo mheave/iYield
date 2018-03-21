@@ -1,11 +1,9 @@
-//https://github.com/ConsenSys/eth-signer
-//https://web3js.readthedocs.io/en/1.0/web3-eth-abi.html#encodefunctioncall
-//https://github.com/ethjs/ethjs-abi/blob/e63f92966179d9017b57c9eadef78384a6899a51/src/index.js#L113
 const ConfigurationService = require('./ConfigurationService');
 const EthService = require('./EthService');
 const TransactionService = require('./TransactionService');
-const iYieldTransactionModel = require('../models/blockchain/iYieldTransactionModel');
-const errorModel = require('../models/errorModel');
+
+const pendingTransactionModel = require('../models/blockchain/PendingTransactionModel');
+const errorModel = require('../models/ErrorModel');
 
 // Gas
 // refactor this out into a service to allow configuration of gas
@@ -14,13 +12,11 @@ const addUserGasCost = 4712388;
 const deleteUserGasCost = 4712388;
 const updateUserGasCost = 4712388;
 
-// Need to unlock main account on node for this to work
-//web3.personal.unlockAccount("0x1313734d2D6625173278978DDaa7B63400462745", '', 9999999);
 class RegistryService{
     constructor(){
+        let configurationService = new ConfigurationService();    
+        this.contractConfigModel = configurationService.getRegistryContractConfig();                   
         this.transactionService = new TransactionService();
-        let configurationService = new ConfigurationService();        
-        this.contractConfigModel = configurationService.getRegistryContractConfig();
         this.ethService = new EthService();     
         this.contract = new this.ethService.eth.contract(this.contractConfigModel.abi).at(this.contractConfigModel.contractAddress);
     }
@@ -44,27 +40,46 @@ class RegistryService{
             if(!txResult.success){
                 throw txResult.error;
             }
-            let iYieldTransaction = iYieldTransactionModel('addUser', { userToAdd: [originator, benefactor]}, txResult.txHash);
-            this.transactionService.addTransactionToPendingList(iYieldTransaction);
-            return iYieldTransaction;
+            let pendingTransaction = pendingTransactionModel('RegistryService.addUser', { userToAdd: [originator, benefactor]}, txResult.txHash);
+            this.transactionService.addTransactionToPendingList(pendingTransaction);
+            return pendingTransaction;
         }
         catch(error){
-            return errorModel("RegistryService.addUser", error, { originator: originator, benefactor: benefactor});
+            return errorModel("RegistryService.addUser", { originator: originator, benefactor: benefactor}, error.message, error.stack);
         }
     }
 
     async deleteUser(address){
-        let data = this.ethService.createTransctionDataObject('removeParticipant', [address], this.contractConfigModel.abi);
-        let txResult = await this.ethService.sendSignedTransaction(this.contractConfigModel, data, 0, deleteUserGasCost, gasPrice); 
-        return txResult;
+        try{
+            let data = this.ethService.createTransctionDataObject('removeParticipant', [address], this.contractConfigModel.abi);
+            let txResult = await this.ethService.sendSignedTransaction(this.contractConfigModel, data, 0, addUserGasCost, gasPrice); 
+            if(!txResult.success){
+                throw txResult.error;
+            }
+            let pendingTransaction = pendingTransactionModel('RegistryService.deleteUser', { userToDelete: [address]}, txResult.txHash);
+            this.transactionService.addTransactionToPendingList(pendingTransaction);
+            return pendingTransaction;
+        }
+        catch(error){
+            return errorModel("RegistryService.deleteUser", { address: address}, error.message, error.stack);
+        }
     }
 
     async updateUser(originator, beneficiary){
-        let data = this.ethService.createTransctionDataObject('updateParticpant', [originator, beneficiary], this.contractConfigModel.abi);
-        let txResult = await this.ethService.sendSignedTransaction(this.contractConfigModel, data, 0, updateUserGasCost, gasPrice); 
-        return txResult;
+        try{
+            let data = this.ethService.createTransctionDataObject('updateParticpant', [originator, benefactor], this.contractConfigModel.abi);
+            let txResult = await this.ethService.sendSignedTransaction(this.contractConfigModel, data, 0, addUserGasCost, gasPrice); 
+            if(!txResult.success){
+                throw txResult.error;
+            }
+            let pendingTransaction = pendingTransactionModel('RegistryService.updateParticpant', { usersToUpdate: [originator, benefactor]}, txResult.txHash);
+            this.transactionService.addTransactionToPendingList(pendingTransaction);
+            return pendingTransaction;
+        }
+        catch(error){
+            return errorModel("RegistryService.updateParticpant", { originator: originator, benefactor: benefactor}, error.message, error.stack);
+        }
     } 
 }
-
 
 module.exports = RegistryService;

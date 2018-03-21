@@ -1,22 +1,27 @@
-const ConfigurationService = require('./ConfigurationService');
 const storage = require('node-persist');
 const _ = require('lodash');
+
+const ConfigurationService = require('./ConfigurationService');
 
 class LocalStorageService
 {
     constructor(){
        storage.initSync();
+       this.configurationService = new ConfigurationService();
        this.setLocalStorageKeys();
     }    
 
     setLocalStorageKeys(){      
-        let configurationService = config;
-        this.localStorageSettings = configurationService.getLocalStorageSettings();
+        this.localStorageSettings = this.configurationService.getLocalStorageSettings();
     }
 
     addTransactionToPendingList(transaction){
-        this.addItemToList(this.localStorageSettings.pendingIYieldTransactionsKey, transaction);
+        this.addItemToList(this.localStorageSettings.pendingTransactionsKey, transaction);
     }    
+
+    addItemToSpentTransactionList(spentTransaction){
+        this.addItemToList(this.localStorageSettings.spentTransactionsKey, spentTransaction);
+    }
 
     addItemToList(listKey, item){
         let itemArray = this.getItemFromStorage(listKey);
