@@ -8,7 +8,8 @@ const apiResponseModel = require('../models/ApiResponseModel');
 
 // Pause or Unpause contract
 contractRouter.post('/contract/paused/:pausestate', async function(req, res){
-  let contractService = new ContractService();
+  let privateKey = req.app.locals.privateKey;      
+  let contractService = new ContractService(privateKey);
   let setPausedStateResponse = await contractService.setPausedState(req.params.pausestate);
   let responseModel = apiResponseModel(setPausedStateResponse);  
   return res.json(responseModel);

@@ -14,11 +14,11 @@ const buyTokensGasCost = 1000000;
 const gasPrice = 20000000000;
 
 class TokenService {
-    constructor(){  
+    constructor(privateKey){  
         this.transactionService = new TransactionService();   
         this.ethService = new EthService();     
 
-        let configurationService = new ConfigurationService();             
+        let configurationService = new ConfigurationService(privateKey);             
         this.contractConfigModel = configurationService.getIyPresaleContractConfig();
         this.mintableContractConfig = configurationService.getMintableTokenContractConfig();
         this.ycContractConfig = configurationService.getYCTokenContractConfig();

@@ -7,7 +7,8 @@ const apiResponseModel = require('../models/ApiResponseModel');
 
 
 tokenRouter.post('/tokens/purchase/:beneficiary/:currency/:currencyAmount/:tokenAmount', async function(req, res){
-    let tokenService = new TokenService();
+    let privateKey = req.app.locals.privateKey;
+    let tokenService = new TokenService(privateKey);
     let currencyPurchaseResponse = await tokenService.currencyTokenPurchase(req.params.beneficiary, req.params.currency, req.params.currencyAmount, req.params.tokenAmount);
     let responseModel = apiResponseModel(currencyPurchaseResponse);
     return res.json(responseModel);
@@ -27,7 +28,8 @@ tokenRouter.get('/tokens/balance/:address', async function(req, res){
 });
 
 tokenRouter.post('/tokens/migrate', async function(req, res){
-    let tokenService = new TokenService();
+    let privateKey = req.app.locals.privateKey;    
+    let tokenService = new TokenService(privateKey);
     let migratedTokens = await tokenService.migrateTokens();
     let responseModel = apiResponseModel(migratedTokens);
     return res.json(responseModel);
