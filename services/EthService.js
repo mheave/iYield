@@ -31,6 +31,10 @@ class EthService{
     }
 
     async sendSignedTransaction(contractModel, data, value, gasCost, gasPrice){
+        if(contractModel.ownerPrivateKey === ""){
+            return { error: { message: "private key not available for transaction."}};
+        }
+
         let nonce = await this.getCurrentNonceForAccount(contractModel.ownerAddress);
         let signedTransaction = sign({
             to: contractModel.contractAddress,

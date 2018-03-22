@@ -13,8 +13,8 @@ const deleteUserGasCost = 4712388;
 const updateUserGasCost = 4712388;
 
 class RegistryService{
-    constructor(){
-        let configurationService = new ConfigurationService();    
+    constructor(privateKey){
+        let configurationService = new ConfigurationService(privateKey);    
         this.contractConfigModel = configurationService.getRegistryContractConfig();                   
         this.transactionService = new TransactionService();
         this.ethService = new EthService();     

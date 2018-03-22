@@ -2,7 +2,6 @@ var express = require('express');
 var path = require('path');
 var bodyParser = require('body-parser')
 var logger = require('morgan');
-var securityCheck = require('./middleware/security')
 var errorModel = require('./models/errorModel');
 
 var registryRouter = require('./routes/registryRouter');
@@ -10,21 +9,9 @@ var contractRouter = require('./routes/contractRouter');
 var tokenRouter = require('./routes/tokenRouter');
 var transactionRouter = require('./routes/transactionRouter');
 
-// Watch for keyfile
-var watch = require('node-watch');
-watch('keydrop', { recursive: true }, function(evt, name) {
+var ConfigurationService = require('./services/ConfigurationService');
 
-  var fs = require('fs');
 
-  fs.readFile(name, 'utf8', function(err, contents) {
-
-    console.log(contents);
-    config.setGlobalSettings({ycAccountPrivateKey : contents});
-    fs.unlink(item, function(){});
-
-  });
-
-});
 
 
 var app = express();
@@ -33,6 +20,24 @@ app.use( bodyParser.json() );
 app.use(bodyParser.urlencoded({ 
   extended: true
 }));
+
+// Watch for keyfile
+var watch = require('node-watch');
+watch('keydrop', { recursive: true }, function(evt, name) {
+  var fs = require('fs');
+  fs.readFile(name, 'utf8', function(err, contents) {
+    if(contents === undefined){
+      return;
+    }
+    console.log(contents);
+    //app.configure(function() {
+      app.locals.privateKey = contents;
+    //});    
+    fs.unlink(name, function(){});
+  });
+
+});
+
 
 
 // Routing
