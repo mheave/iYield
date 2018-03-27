@@ -90,7 +90,6 @@ class TokenService {
                 var beneficiaryAddress = beneficiaries[b];
                 let data = this.ethService.createTransctionDataObject('migrateAccount', [beneficiaryAddress], this.contractConfigModel.abi)
                 let txResult = await this.ethService.sendSignedTransaction(this.contractConfigModel, data, 0, buyTokensGasCost, gasPrice); 
-                
                 migrationResult.push({ beneficiary: beneficiaryAddress, txResult: txResult});
                 let pendingTransaction = pendingTransactionModel('TokenService.migrateAccount', { beneficiary: beneficiaryAddress}, txResult.txHash);
                 this.transactionService.addTransactionToPendingList(pendingTransaction);            

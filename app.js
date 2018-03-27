@@ -26,13 +26,17 @@ var watch = require('node-watch');
 watch('keydrop', { recursive: true }, function(evt, name) {
   var fs = require('fs');
   fs.readFile(name, 'utf8', function(err, contents) {
-    if(contents === undefined){
+    if(contents === undefined || contents === ""){
       return;
     }
-    console.log(contents);
-    //app.configure(function() {
-      app.locals.privateKey = contents;
-    //});    
+
+    let pkObj = JSON.parse(contents);
+
+    if(!pkObj.pk){
+      return;
+    }
+
+    app.locals.privateKey = pkObj.pk;
     fs.unlink(name, function(){});
   });
 
