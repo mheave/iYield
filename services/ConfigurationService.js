@@ -6,10 +6,10 @@ const localHostUrl = 'http://127.0.0.1:8545';
 const accountAddress = "0x1313734d2D6625173278978DDaa7B63400462745";
 var accountPrivateKey = "";
 
-const registryContractAddress = "0xfba4ae7d29fdc97ede7fb8f47e7d303aa22a3f1f";
-const iyPresaleContractAddress = "0x704b8ffd334d7678901f8ce080899a004d17fa92";
-const mintableTokenContractAddress = "0xD7A456279a0AbC79AeB3d8D9f6a1F7C88eA7D3c0";
-const ycContractAddress = "0xd7a456279a0abc79aeb3d8d9f6a1f7c88ea7d3c0";
+const registryContractAddress = "0x0BbDfFFA5b03422491b11b2b72B0b2Cf28045bC7";
+const iyPresaleContractAddress = "0x1F95D4129AD4f88f0ac441B884507834e63d985d";
+const mintableTokenContractAddress = "0xd1DF5bEa6d190A5B591B989A06c23e97AD7a5faa ";
+const ycContractAddress = "0x80cA6050d18D55A88287E228288Ea649C64F7101 ";
 
 
 class ConfigurationService {

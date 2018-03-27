@@ -1,7 +1,7 @@
 const ConfigurationService = require('./ConfigurationService');
 const EthService = require('./EthService');
 const TransactionService = require('./TransactionService');
-
+const sign = require('ethjs-signer').sign;
 const pendingTransactionModel = require('../models/blockchain/PendingTransactionModel');
 const errorModel = require('../models/ErrorModel');
 
@@ -22,7 +22,7 @@ class RegistryService{
     }
 
     async getAllBeneficiaries(){
-        let result = await this.contract.getAllBeneficiaries({from: this.ownerAddress})
+        let result = await this.contract.getAllBeneficiaries({from: this.contractConfigModel.ownerAddress})
         if(result[0].length && result[0].length > 0){
             return result[0];
         }
@@ -30,7 +30,17 @@ class RegistryService{
     }
 
     async getUser(address){
-        return await this.contract.getBeneficiary(address, {from: this.ownerAddress});
+        return await this.contract.getBeneficiary(address, {from: this.contractConfigModel.ownerAddress});
+    }
+
+    async isValidParticipant(address){
+        try{
+            let result =  await this.contract.isValidParticipant(address, {from: this.contractConfigModel.ownerAddress});
+            return  { isValidParticipant : result }
+        }
+        catch(error){
+            return errorModel("RegistryService.isValidParticipant", null, error.message, error.stack);
+        }
     }
 
     async addUser(originator, benefactor){
