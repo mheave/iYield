@@ -44,10 +44,14 @@ class EthService{
             nonce: nonce,
             data: data
           }, contractModel.ownerPrivateKey);
-        
+
+        return await this.sendRawSignedTransction(signedTransaction);
+    }
+
+    async sendRawSignedTransction(signedTransaction){
         let transaction = await this.eth.sendRawTransaction(signedTransaction).catch((err) => {return err;});
         let txResult = TransactionResult(transaction);
-        return txResult;
+        return txResult;        
     }
 
     async getCurrentNonceForAccount(account){
