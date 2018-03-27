@@ -35,6 +35,9 @@ class BlockChainMonitorService
         let ethService = new EthService();        
         for(var t = 0; t < pendingTransactions.length; t++){
             let tx = pendingTransactions[t];
+            if(!tx.transactionHash || tx.transactionHash === ""){
+                continue;
+            }
             let txReceipt = await ethService.eth.getTransactionReceipt(tx.transactionHash);
             if(txReceipt){
                await this.analyseAndProcessTransactionReceipt(tx, txReceipt);
