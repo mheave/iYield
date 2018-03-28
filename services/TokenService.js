@@ -44,9 +44,9 @@ class TokenService {
     async getCurrentRaisedAmount(){
         try{
             let iyPresaleContract = await this.ethService.getContractFromConfig(this.ycContractConfig);
-            let totalRaisedInWei = await iyPresaleContract.totalSupply();
-            let totalRaised = unit.fromWei(totalRaisedInWei[0].toString(10), 'ether');
-            return  { currentContractFrtTotal : totalRaised }
+            let totalRaisedInWei = await iyPresaleContract.totalSupply({from: this.ycContractConfig.ownerAddress, to: this.ycContractConfig.contractAddress, data:{}});
+            //let totalRaised = await totalRaisedInWei();//unit.fromWei(totalRaisedInWei[0].toString(10), 'ether');
+            return  { currentContractFrtTotal : totalRaisedInWei }
         }
         catch(error){
             return errorModel("TokenService.getCurrentRaisedAmount", null, error.message, error.stack);
