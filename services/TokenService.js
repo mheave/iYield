@@ -1,6 +1,6 @@
+const format = require('ethjs-format');
 const unit = require('ethjs-unit');
 const BN = require('bn.js');
-
 
 const ConfigurationService = require('./ConfigurationService');
 const EthService = require('./EthService');
@@ -41,12 +41,20 @@ class TokenService {
         }
     }
 
-    async getCurrentRaisedAmount(){
+    async getCurrentRaisedFrtAmount(){
         try{
-            let iyPresaleContract = await this.ethService.getContractFromConfig(this.ycContractConfig);
-            let totalRaisedInWei = await iyPresaleContract.totalSupply({from: this.ycContractConfig.ownerAddress, to: this.ycContractConfig.contractAddress, data:{}});
-            //let totalRaised = await totalRaisedInWei();//unit.fromWei(totalRaisedInWei[0].toString(10), 'ether');
-            return  { currentContractFrtTotal : totalRaisedInWei }
+            let contract = new this.ethService.eth.contract(this.mintableContractConfig.abi).at(this.mintableContractConfig.contractAddress);
+            let formattedPayload = format.formatInputs('eth_call',
+            [{
+                "from" : this.mintableContractConfig.ownerAddress,
+                "to" : this.mintableContractConfig.contractAddress,
+                "data" : "0x"
+            }, "latest"]);
+
+            let result = await contract.totalSupply.call(formattedPayload);
+            let totalRaisedInWei = result[0].toString(10);
+            let totalRaised = unit.fromWei(totalRaisedInWei, 'ether')
+            return  { currentContractFrtTotal : totalRaised }
         }
         catch(error){
             return errorModel("TokenService.getCurrentRaisedAmount", null, error.message, error.stack);

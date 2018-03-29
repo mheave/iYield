@@ -17,8 +17,9 @@ contractRouter.post('/contract/paused/:pausestate', async function(req, res){
 
 // Get total FRTs for current round
  contractRouter.get('/contract/currentroundtotal', async function(req, res){
-    let tokenService = new TokenService();
-    let currentAmountRaised = await tokenService.getCurrentRaisedAmount();
+    let privateKey = req.app.locals.privateKey;    
+    let tokenService = new TokenService(privateKey);
+    let currentAmountRaised = await tokenService.getCurrentRaisedFrtAmount();
     let responseModel = apiResponseModel(currentAmountRaised);
     return res.json(responseModel);
 });
