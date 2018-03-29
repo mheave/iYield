@@ -1,32 +1,55 @@
-Endpoints
-----------
-Contract:
-GET - /contract/pausestate
-GET - /contract/currentroundtotal 			<- current FRT total
-GET - /contract/endtime
-POST - /contract/paused/{pausestate}		<- true to pause, false to unpause
-POST - /contract/updateendtime/{datetime}	<- NOTE: datetime is of type Unix Epoch (# seconds since 1/1/1970) [https://en.wikipedia.org/wiki/Unix_time]
+# Endpoints
 
-Registry:
-GET - /registry/allbeneficiaries
-GET - /registry/isvalidparticipant/{address}
-GET - /registry/{address}
-POST - /registry/{address}					<- add to registry
-POST - /registry/{originator}/{beneficiary} <- add to registry
+## Contract:
 
-Token:
-GET - /tokens/balance/yieldcoin/{address}
-GET - /tokens/balance/{address}				<- FRT balance
-POST - /tokens/migrate
-POST - /tokens/purchase/{beneficiary}/{currency}/{currencyAmount}/{tokenAmount}
+* GET - /contract/pausestate
 
-Transaction:
-GET - /transaction/{txHash}
-GET - /transaction/network/{txHash}
+* GET - /contract/currentroundtotal 			<- current FRT total
+
+* GET - /contract/endtime
+
+* POST - /contract/paused/{pausestate}		<- true to pause, false to unpause
+
+* POST - /contract/updateendtime/{datetime}	<- NOTE: datetime is of type Unix Epoch (# seconds since 1/1/1970) [https://en.wikipedia.org/wiki/Unix_time]
 
 
-Instructions
-------------
+
+## Registry:
+
+* GET - /registry/allbeneficiaries
+
+* GET - /registry/isvalidparticipant/{address}
+
+* GET - /registry/{address}
+
+* POST - /registry/{address}					<- add to registry
+
+* POST - /registry/{originator}/{beneficiary} <- add to registry
+
+
+
+## Token:
+
+* GET - /tokens/balance/yieldcoin/{address}
+
+* GET - /tokens/balance/{address}				<- FRT balance
+
+* POST - /tokens/migrate
+
+* POST - /tokens/purchase/{beneficiary}/{currency}/{currencyAmount}/{tokenAmount}
+
+
+
+## Transaction:
+
+* GET - /transaction/{txHash}
+
+* GET - /transaction/network/{txHash}
+
+
+
+
+# Instructions
 
 1) Check /services/ConfigurationService.js for network connections and account details. At time of editing (31/1/18) these are the Rinkeby test network. The settings can be changed to connect to a locally connected node. In addition to this the configuration objects are in the same file and contain account and contract details (such as address).
 
