@@ -1,3 +1,30 @@
+Endpoints
+----------
+Contract:
+GET - /contract/pausestate
+GET - /contract/currentroundtotal 			<- current FRT total
+GET - /contract/endtime
+POST - /contract/paused/{pausestate}		<- true to pause, false to unpause
+POST - /contract/updateendtime/{datetime}	<- NOTE: datetime is of type Unix Epoch (# seconds since 1/1/1970) [https://en.wikipedia.org/wiki/Unix_time]
+
+Registry:
+GET - /registry/allbeneficiaries
+GET - /registry/isvalidparticipant/{address}
+GET - /registry/{address}
+POST - /registry/{address}					<- add to registry
+POST - /registry/{originator}/{beneficiary} <- add to registry
+
+Token:
+GET - /tokens/balance/yieldcoin/{address}
+GET - /tokens/balance/{address}				<- FRT balance
+POST - /tokens/migrate
+POST - /tokens/purchase/{beneficiary}/{currency}/{currencyAmount}/{tokenAmount}
+
+Transaction:
+GET - /transaction/{txHash}
+GET - /transaction/network/{txHash}
+
+
 Instructions
 ------------
 
@@ -17,118 +44,6 @@ iii) http://localhost:3030/tokens/balance/{accountaddress} - GET
 iv) http://localhost:3030/transaction/{transactionhash} - GET
 
 NOTE: transactions i and ii are writes and therefore are subject to nonce ordering. Plese wait 15s between transactions until queuing is resolved.
-
-
-PostMan Export
---------------
-
-The following PostMan export show the endpoints are currently available.
-
-{
-	"info": {
-		"name": "iYieldContractTesting",
-		"_postman_id": "f7805a22-fa4c-b59b-6529-8dc3250475e3",
-		"description": "",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
-	},
-	"item": [
-		{
-			"name": "Add 0x03c53c2941ebb7c743dd1d4f1b80405c532fc458 to registry",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"value": "application/json"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": ""
-				},
-				"url": {
-					"raw": "http://localhost:3030/registry/0x03c53c2941ebb7c743dd1d4f1b80405c532fc458",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "3030",
-					"path": [
-						"registry",
-						"0x03c53c2941ebb7c743dd1d4f1b80405c532fc458"
-					]
-				},
-				"description": ""
-			},
-			"response": []
-		},
-		{
-			"name": "Token purchase for 0x03c53c2941ebb7c743dd1d4f1b80405c532fc458",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"value": "application/json"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": ""
-				},
-				"url": {
-					"raw": "http://localhost:3030/tokens/purchase/0x03c53c2941ebb7c743dd1d4f1b80405c532fc458/0x02345/500/500",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "3030",
-					"path": [
-						"tokens",
-						"purchase",
-						"0x03c53c2941ebb7c743dd1d4f1b80405c532fc458.0x02345.500.500"
-					]
-				},
-				"description": ""
-			},
-			"response": []
-		},
-		{
-			"name": "Check transaction status for 0xb026332a9980efa48d70e7cdc4fee6505b803a05554a812e30b293727e6cd08d",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"body": {},
-				"url": {
-					"raw": "http://localhost:3030/transaction/0xb026332a9980efa48d70e7cdc4fee6505b803a05554a812e30b293727e6cd08d",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "3030",
-					"path": [
-						"transaction",
-						"0xb026332a9980efa48d70e7cdc4fee6505b803a05554a812e30b293727e6cd08d"
-					]
-				},
-				"description": ""
-			},
-			"response": []
-		}
-	]
-}
-
-
-
-
-Rinkeby and Account Settings
------------------------------
-
-mintable token contract: 0x835c42aaf82e1c49367a4fa012a8f76c50f5caff
-registry contract: 0xaa148d4490a4d6b83c7c26ad16f31dda21c3895a
-presale contract: 0xd6d387590973f6da8e264d7ab519efaa7e1f5520
-
-
 
 
 Available Accounts
