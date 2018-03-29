@@ -5,7 +5,15 @@ const TokenService = require('../services/TokenService');
 
 const apiResponseModel = require('../models/ApiResponseModel');
 
-// Pause or Unpause contract
+ // Get current paused state for contract
+ contractRouter.get('/contract/pausestate', async function(req, res){
+  let contractService = new ContractService();
+  let pauseStateResponse = await contractService.getPauseState();
+  let responseModel = apiResponseModel(pauseStateResponse);  
+  return res.json(responseModel);  
+ });
+
+// set pause or unpause for contract
 contractRouter.post('/contract/paused/:pausestate', async function(req, res){
   let privateKey = req.app.locals.privateKey;      
   let contractService = new ContractService(privateKey);
@@ -14,14 +22,6 @@ contractRouter.post('/contract/paused/:pausestate', async function(req, res){
   return res.json(responseModel);
  });
 
- // Get current paused state for contract
- contractRouter.get('/contract/pausestate', async function(req, res){
-  let privateKey = req.app.locals.privateKey;      
-  let contractService = new ContractService(privateKey);
-  let pauseStateResponse = await contractService.getPauseState();
-  let responseModel = apiResponseModel(pauseStateResponse);  
-  return res.json(responseModel);  
- });
 
 // Get total FRTs for current round
 contractRouter.get('/contract/currentroundtotal', async function(req, res){
@@ -32,8 +32,15 @@ contractRouter.get('/contract/currentroundtotal', async function(req, res){
   return res.json(responseModel);
 });
 
+// get the end time for the contract
+contractRouter.get('/contract/endtime', async function(req, res){
+  let contractService = new ContractService();
+  let endtimeResponse = await contractService.getEndtime();
+  let responseModel = apiResponseModel(endtimeResponse);  
+  return res.json(responseModel);    
+});
 
-// Update the end time for the contract
+// set the end time for the contract
 contractRouter.post('/contract/updateendtime/:datetime', async function(req, res){
   let privateKey = req.app.locals.privateKey;      
   let contractService = new ContractService(privateKey);

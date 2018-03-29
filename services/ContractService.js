@@ -42,6 +42,19 @@ class ContractService {
         }
     } 
 
+    async getEndtime(){
+        try{
+            let contract = await this.ethService.getContractFromConfig(this.contractConfigModel);
+            let endtime = await contract.endTime();
+            let unixEpochTime = parseInt(endtime[0].toString(10));
+            let formattedEndtime = new Date(unixEpochTime*1000); 
+            return { endtime: formattedEndtime };
+        }
+        catch(error){
+            return errorModel("ContractService.getEndtime", {}, error.message, error.stack);
+        }        
+    }
+
     async updateEndtime(datetime){
         try{
             let data = this.ethService.createTransctionDataObject('updateEndTime', [datetime], this.contractConfigModel.abi);
