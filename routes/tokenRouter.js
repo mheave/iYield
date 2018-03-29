@@ -15,13 +15,15 @@ tokenRouter.post('/tokens/purchase/:beneficiary/:currency/:currencyAmount/:token
 });
 
 tokenRouter.get('/tokens/balance/yieldcoin/:address', async function(req, res){
-    let tokenService = new TokenService();
+    let privateKey = req.app.locals.privateKey;    
+    let tokenService = new TokenService(privateKey);
     let responseJson = await tokenService.getYcBalanceForAddress(req.params.address);
     return res.json(responseJson);
 });
 
 tokenRouter.get('/tokens/balance/:address', async function(req, res){
-    let tokenService = new TokenService();
+    let privateKey = req.app.locals.privateKey;    
+    let tokenService = new TokenService(privateKey);
     let tokenBalanceResponse = await tokenService.getTokenBalanceForAddress(req.params.address);
     let responseModel = apiResponseModel(tokenBalanceResponse);
     return res.json(responseModel);
