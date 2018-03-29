@@ -1,7 +1,7 @@
-#Endpoints
-#----------
+# Endpoints
+# ----------
 
-##Contract:
+## Contract:
 
 * GET - /contract/pausestate
 
@@ -15,7 +15,7 @@
 
 
 
-##Registry:
+## Registry:
 
 * GET - /registry/allbeneficiaries
 
@@ -29,7 +29,7 @@
 
 
 
-##Token:
+## Token:
 
 * GET - /tokens/balance/yieldcoin/{address}
 
@@ -41,7 +41,7 @@
 
 
 
-##Transaction:
+## Transaction:
 
 * GET - /transaction/{txHash}
 
@@ -49,8 +49,8 @@
 
 
 
-#Instructions
-#------------
+# Instructions
+# ------------
 
 1) Check /services/ConfigurationService.js for network connections and account details. At time of editing (31/1/18) these are the Rinkeby test network. The settings can be changed to connect to a locally connected node. In addition to this the configuration objects are in the same file and contain account and contract details (such as address).
 
