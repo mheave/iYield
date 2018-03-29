@@ -1,5 +1,4 @@
 # Endpoints
-# ----------
 
 ## Contract:
 
@@ -49,8 +48,8 @@
 
 
 
+
 # Instructions
-# ------------
 
 1) Check /services/ConfigurationService.js for network connections and account details. At time of editing (31/1/18) these are the Rinkeby test network. The settings can be changed to connect to a locally connected node. In addition to this the configuration objects are in the same file and contain account and contract details (such as address).
 
