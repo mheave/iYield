@@ -1,18 +1,7 @@
 const express = require('express');
 let tokenRouter = express.Router();
-
 const TokenService = require('../services/TokenService');
-
 const apiResponseModel = require('../models/ApiResponseModel');
-
-
-tokenRouter.post('/tokens/purchase/:beneficiary/:currency/:currencyAmount/:tokenAmount', async function(req, res){
-    let privateKey = req.app.locals.privateKey;
-    let tokenService = new TokenService(privateKey);
-    let currencyPurchaseResponse = await tokenService.currencyTokenPurchase(req.params.beneficiary, req.params.currency, req.params.currencyAmount, req.params.tokenAmount);
-    let responseModel = apiResponseModel(currencyPurchaseResponse);
-    return res.json(responseModel);
-});
 
 tokenRouter.get('/tokens/balance/yieldcoin/:address', async function(req, res){
     let privateKey = req.app.locals.privateKey;    
@@ -36,5 +25,16 @@ tokenRouter.post('/tokens/migrate', async function(req, res){
     let responseModel = apiResponseModel(migratedTokens);
     return res.json(responseModel);
 });
+
+tokenRouter.post('/tokens/purchase/:beneficiary/:currency/:currencyAmount/:tokenAmount', async function(req, res){
+    let privateKey = req.app.locals.privateKey;
+    let tokenService = new TokenService(privateKey);
+    let currencyPurchaseResponse = await tokenService.currencyTokenPurchase(req.params.beneficiary, req.params.currency, req.params.currencyAmount, req.params.tokenAmount);
+    let responseModel = apiResponseModel(currencyPurchaseResponse);
+    return res.json(responseModel);
+});
+
+
+
 
 module.exports = tokenRouter;

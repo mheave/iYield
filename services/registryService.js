@@ -50,8 +50,7 @@ class RegistryService{
             if(!txResult.success){
                 throw txResult.error;
             }
-            let pendingTransaction = pendingTransactionModel('RegistryService.addUser', { userToAdd: [originator, benefactor]}, txResult.txHash);
-            this.transactionService.addTransactionToPendingList(pendingTransaction);
+            let pendingTransaction = this.transactionService.createPendingTransaction('RegistryService.addUser', { userToAdd: [originator, benefactor]}, txResult.txHash);
             return pendingTransaction;
         }
         catch(error){
@@ -66,8 +65,7 @@ class RegistryService{
             if(!txResult.success){
                 throw txResult.error;
             }
-            let pendingTransaction = pendingTransactionModel('RegistryService.deleteUser', { userToDelete: [address]}, txResult.txHash);
-            this.transactionService.addTransactionToPendingList(pendingTransaction);
+            let pendingTransaction = this.transactionService.createPendingTransaction('RegistryService.deleteUser', { userToDelete: [address]}, txResult.txHash);
             return pendingTransaction;
         }
         catch(error){
@@ -82,8 +80,7 @@ class RegistryService{
             if(!txResult.success){
                 throw txResult.error;
             }
-            let pendingTransaction = pendingTransactionModel('RegistryService.updateParticpant', { usersToUpdate: [originator, benefactor]}, txResult.txHash);
-            this.transactionService.addTransactionToPendingList(pendingTransaction);
+            let pendingTransaction = this.transactionService.createPendingTransaction('RegistryService.updateParticpant', { usersToUpdate: [originator, benefactor]}, txResult.txHash);
             return pendingTransaction;
         }
         catch(error){

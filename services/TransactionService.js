@@ -2,7 +2,7 @@ const _ = require('lodash');
 
 const LocalStorageService = require('./LocalStorageService');
 const EthService = require('./EthService');
-
+const pendingTransactionModel = require('../models/blockchain/PendingTransactionModel');
 
 const transactionPendingLabel = 'pending';
 const transactionMinedLabel = 'mined';
@@ -23,7 +23,6 @@ class TransactionService
         this.localStorageService.removeTransactionFromPendingList(txHash);
         this.localStorageService.addItemToSpentTransactionList(spentTransaction);
     }    
-
 
     getTransactionStatus(txHash){
         let pendingTransactionEntry = this.localStorageService.getTransactionFromPendingList(txHash);
@@ -49,8 +48,11 @@ class TransactionService
         return {status: "pending", txReceipt: null};
     }
 
-
-
+    createPendingTransaction(name, data, txHash){
+        let pendingTransaction = pendingTransactionModel(name, data, txHash);
+        this.addTransactionToPendingList(pendingTransaction);
+        return pendingTransaction;
+    }
 }
 
 module.exports = TransactionService;
