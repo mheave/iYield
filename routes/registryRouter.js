@@ -1,9 +1,7 @@
 const express = require('express');
 let registryRouter = express.Router();
-
 const RegistryService = require('../services/RegistryService');
 const ContractService = require('../services/ContractService');
-
 const apiResponseModel = require('../models/ApiResponseModel');
 
 // Get a llist of all the participants of the contract

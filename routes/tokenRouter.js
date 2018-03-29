@@ -1,10 +1,7 @@
 const express = require('express');
 let tokenRouter = express.Router();
-
 const TokenService = require('../services/TokenService');
-
 const apiResponseModel = require('../models/ApiResponseModel');
-
 
 tokenRouter.post('/tokens/purchase/:beneficiary/:currency/:currencyAmount/:tokenAmount', async function(req, res){
     let privateKey = req.app.locals.privateKey;
