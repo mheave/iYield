@@ -32,18 +32,43 @@ class TokenService {
             if(!txResult.success){
                 throw txResult.error;
             }
-            let pendingTransaction = pendingTransactionModel('TokenService.currencyTokenPurchase', { beneficiary: beneficiary, currency: currency, currencyAmount: currencyAmount, tokenAmount: tokenAmount}, txResult.txHash);
-            this.transactionService.addTransactionToPendingList(pendingTransaction);
+
+            let pendingTransaction = this.transactionService.createPendingTransaction('TokenService.currencyTokenPurchase', { beneficiary: beneficiary, currency: currency, currencyAmount: currencyAmount, tokenAmount: tokenAmount}, txResult.txHash);
             return pendingTransaction;            
         }
         catch(error){
             return errorModel("TokenService.currencyTokenPurchase", {beneficiary: beneficiary, currency: currency, currencyAmount: currencyAmount, tokenAmount: tokenAmount }, error.message, error.stack);
         }
     }
+   
+    async migrateTokens(){
+        try{
+            let registryService = new RegistryService();
+            let beneficiaries = await registryService.getAllBeneficiaries();
+            if(beneficiaries.length === 0){
+                return;
+            }
+    
+            let migrationResult = [];
+            for(let b = 0; b < beneficiaries.length; b++){
+                var beneficiaryAddress = beneficiaries[b];
+                let data = this.ethService.createTransctionDataObject('migrateAccount', [beneficiaryAddress], this.contractConfigModel.abi)
+                let txResult = await this.ethService.sendSignedTransaction(this.contractConfigModel, data, 0, buyTokensGasCost, gasPrice); 
+                migrationResult.push({ beneficiary: beneficiaryAddress, txResult: txResult});
+                this.transactionService.createPendingTransaction('TokenService.migrateAccount', { beneficiary: beneficiaryAddress}, txResult.txHash);         
+            }
+            return { totalAccountsMigrated: migrationResult.length, report: migrationResult};
+
+        }
+        catch(error){
+            return errorModel("TokenService.migrateTokens",null, error.message, error.stack);
+        }
+    }
 
     async getCurrentRaisedFrtAmount(){
         try{
-            let contract = new this.ethService.eth.contract(this.mintableContractConfig.abi).at(this.mintableContractConfig.contractAddress);
+            let mintableContract = await this.ethService.getContractFromConfig(this.mintableContractConfig);
+                        
             let formattedPayload = format.formatInputs('eth_call',
             [{
                 "from" : this.mintableContractConfig.ownerAddress,
@@ -51,8 +76,9 @@ class TokenService {
                 "data" : "0x"
             }, "latest"]);
 
-            let result = await contract.totalSupply.call(formattedPayload);
+            let result = await mintableContract.totalSupply.call(formattedPayload);
             let totalRaisedInWei = result[0].toString(10);
+            // this conversion is a bit of a misnomer; it's actually tokens not ether.
             let totalRaised = unit.fromWei(totalRaisedInWei, 'ether')
             return  { currentContractFrtTotal : totalRaised }
         }
@@ -83,32 +109,7 @@ class TokenService {
         catch(error){
             return errorModel("TokenService.getYcBalanceForAddress",{address: address}, error.message, error.stack);
         }
-    }    
-
-    async migrateTokens(){
-        try{
-            let registryService = new RegistryService();
-            let beneficiaries = await registryService.getAllBeneficiaries();
-            if(beneficiaries.length === 0){
-                return;
-            }
-    
-            let migrationResult = [];
-            for(let b = 0; b < beneficiaries.length; b++){
-                var beneficiaryAddress = beneficiaries[b];
-                let data = this.ethService.createTransctionDataObject('migrateAccount', [beneficiaryAddress], this.contractConfigModel.abi)
-                let txResult = await this.ethService.sendSignedTransaction(this.contractConfigModel, data, 0, buyTokensGasCost, gasPrice); 
-                migrationResult.push({ beneficiary: beneficiaryAddress, txResult: txResult});
-                let pendingTransaction = pendingTransactionModel('TokenService.migrateAccount', { beneficiary: beneficiaryAddress}, txResult.txHash);
-                this.transactionService.addTransactionToPendingList(pendingTransaction);            
-            }
-            return { totalAccountsMigrated: migrationResult.length, report: migrationResult};
-
-        }
-        catch(error){
-            return errorModel("TokenService.migrateTokens",null, error.message, error.stack);
-        }
-    }
+    }        
 }
 
 module.exports = TokenService;

@@ -12,12 +12,20 @@ class ContractService {
     constructor(privateKey){  
         this.transactionService = new TransactionService();   
         this.ethService = new EthService();     
-
         let configurationService = new ConfigurationService(privateKey);             
         this.contractConfigModel = configurationService.getIyPresaleContractConfig();
-        this.mintableContractConfig = configurationService.getMintableTokenContractConfig();
-        this.ycContractConfig = configurationService.getYCTokenContractConfig();
     }
+
+    async getPauseState(){
+        try{
+            let contract = await this.ethService.getContractFromConfig(this.contractConfigModel);
+            let isPaused = await contract.isPaused();
+            return { isPaused: isPaused };
+        }
+        catch(error){
+            return errorModel("ContractService.getPauseState", {}, error.message, error.stack);
+        }
+    }    
 
     async setPausedState(pauseState){
         try{
@@ -26,8 +34,7 @@ class ContractService {
             if(!txResult.success){
                 throw txResult.error;
             }
-            let pendingTransaction = pendingTransactionModel('Contract.setPauseState', { pauseState: pauseState}, txResult.txHash);
-            this.transactionService.addTransactionToPendingList(pendingTransaction);
+            let pendingTransaction = this.transactionService.createPendingTransaction('Contract.setPauseState', { pauseState: pauseState}, txResult.txHash);
             return pendingTransaction;
         }
         catch(error){
@@ -35,6 +42,33 @@ class ContractService {
         }
     } 
 
+    async getEndtime(){
+        try{
+            let contract = await this.ethService.getContractFromConfig(this.contractConfigModel);
+            let endtime = await contract.endTime();
+            let unixEpochTime = parseInt(endtime[0].toString(10));
+            let formattedEndtime = new Date(unixEpochTime*1000); 
+            return { endtime: formattedEndtime };
+        }
+        catch(error){
+            return errorModel("ContractService.getEndtime", {}, error.message, error.stack);
+        }        
+    }
+
+    async updateEndtime(datetime){
+        try{
+            let data = this.ethService.createTransctionDataObject('updateEndTime', [datetime], this.contractConfigModel.abi);
+            let txResult = await this.ethService.sendSignedTransaction(this.contractConfigModel, data, 0, gasCost, gasPrice); 
+            if(!txResult.success){
+                throw txResult.error;
+            }
+            let pendingTransaction = this.transactionService.createPendingTransaction('Contract.updateEndTime', { datetime: datetime}, txResult.txHash);            
+            return pendingTransaction;
+        }
+        catch(error){
+            return errorModel("Contract.updateEndTime", { datetime: datetime } , error.message, error.stack);
+        }
+    }     
 }
 
 module.exports = ContractService;

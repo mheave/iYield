@@ -1,15 +1,7 @@
 const express = require('express');
 let transactionRouter = express.Router();
-
 const TransactionService = require('../services/TransactionService');
-
 const apiResponseModel = require('../models/ApiResponseModel');
-
-/*
-    TO DO
-    ~~~~~
-    * Transaction query endpoint and models
-*/
 
 transactionRouter.get('/transaction/:txHash', async function(req, res){
     let transactionService = new TransactionService();
