@@ -2,7 +2,7 @@ var express = require('express');
 var path = require('path');
 var bodyParser = require('body-parser')
 var logger = require('morgan');
-var errorModel = require('./models/errorModel');
+var errorModel = require('./models/ErrorModel');
 
 var registryRouter = require('./routes/registryRouter');
 var contractRouter = require('./routes/contractRouter');
