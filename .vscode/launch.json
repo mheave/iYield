@@ -6,6 +6,6 @@
       "request": "launch",
       "name": "Launch Program",
       "program": "${workspaceFolder}/bin/www"
-    }
+    }  
   ]
 }
