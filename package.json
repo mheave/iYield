@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www"
+    "start": "node ./bin/www",
+    "test": "ava"
   },
   "dependencies": {
     "@digicat/ethereum-extract-contract-events": "^1.0.0",
@@ -27,5 +28,18 @@
     "request": "^2.83.0",
     "serve-favicon": "~2.4.5",
     "web3": "^1.0.0-beta.26"
-  }
+  },
+  "devDependencies": {
+    "ava": "^1.0.0-beta.3"
+  },
+	"ava": {
+		"files": [
+			"tests/*.js"
+		],
+		"concurrency": 5,
+		"failFast": true,
+		"failWithoutAssertions": false,
+		"tap": false,
+		"compileEnhancements": false
+	}  
 }
