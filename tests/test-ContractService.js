@@ -12,12 +12,12 @@ test.serial.before(t => {
     _contractService = new ContractService();
 });
 
-test('can get pause state from contract', async t => {
+test('getPauseState >> can get pause state from contract', async t => {
     let pauseState = await _contractService.getPauseState();
     t.not(pauseState.isPaused, undefined);
 });
 
-test('can get end time from contract', async t => {
+test('getEndtime >> can get end time from contract', async t => {
     let endTime = await _contractService.getEndtime();
     t.not(endTime.endtime, undefined);
 });

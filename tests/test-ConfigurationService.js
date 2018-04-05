@@ -11,12 +11,12 @@ test.serial.before(t => {
     _configService = new ConfigurationService();
 });
 
-test('can get global settings object', async t => {
+test('getGlobalSettings >> can get global settings object', async t => {
 	let globalSettings = _configService.getGlobalSettings();
 	t.not(globalSettings, null);
 });
 
-test('can get local storage settings and contracts', t => {
+test('getLocalStorageSettings >> can get local storage settings and contracts', t => {
 	let localStorageSettings = _configService.getLocalStorageSettings();
 	t.not(localStorageSettings.currentContractsSettings, null);
 });

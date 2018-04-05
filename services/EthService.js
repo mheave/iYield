@@ -61,6 +61,9 @@ class EthService{
 
     createTransctionDataObject(methodName, data, contractAbi){
         let abiMethod = this.getMethodFromAbi(methodName, contractAbi);
+        if(abiMethod === undefined){
+            throw new Error("ABI method undefined");
+        }
         let dataObject = ethAbi.encodeMethod(abiMethod, data)
         return dataObject;
     }
