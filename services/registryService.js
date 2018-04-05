@@ -87,8 +87,6 @@ class RegistryService{
             return errorModel("RegistryService.updateParticpant", { originator: originator, benefactor: benefactor}, error.message, error.stack);
         }
     } 
-
-   
 }
 
 module.exports = RegistryService;
