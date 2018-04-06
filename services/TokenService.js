@@ -103,6 +103,7 @@ class TokenService {
         try{
             let iyPresaleContract = await this.ethService.getContractFromConfig(this.ycContractConfig);
             let balanceResult = await iyPresaleContract.balanceOf(address);
+            console.log(balanceResult);
             let balance = unit.fromWei(balanceResult.balance.toString(10), 'ether');
             return { balance: balance };
         }
