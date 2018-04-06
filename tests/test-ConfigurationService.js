@@ -3,6 +3,8 @@ const ConfigurationService = require('../services/ConfigurationService');
 
 var _configService;
 
+test.todo('Abstract test config values into file, allow updating as part of deployment of new contracts.');
+
 test('can create new instance of service', t => {
 	t.notThrows(() => new ConfigurationService());
 });

@@ -39,7 +39,7 @@
 		"concurrency": 5,
 		"failFast": false,
 		"failWithoutAssertions": false,
-		"tap": true,
+		"tap": false,
     "compileEnhancements": true
 	}  
 }
